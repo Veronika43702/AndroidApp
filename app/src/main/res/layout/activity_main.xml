@@ -90,7 +90,7 @@
         android:background="@android:color/transparent"
         android:contentDescription="@string/description_post_like"
         app:layout_constraintTop_toBottomOf="@id/content_barrier"
-        app:srcCompat="@drawable/ic_like_24" />
+        tools:srcCompat="@drawable/ic_like_24" />
 
     <TextView
         android:id="@+id/likeCount"
@@ -98,9 +98,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/text_spacing"
         android:layout_marginTop="@dimen/common_spacing"
-        android:text="10"
         app:layout_constraintStart_toEndOf="@id/like"
-        app:layout_constraintTop_toBottomOf="@id/content_barrier" />
+        app:layout_constraintTop_toBottomOf="@id/content_barrier"
+        tools:text="10" />
 
     <ImageButton
         android:id="@+id/share"
@@ -112,7 +112,7 @@
         android:contentDescription="@string/description_post_share"
         app:layout_constraintStart_toEndOf="@id/likeCount"
         app:layout_constraintTop_toBottomOf="@id/content_barrier"
-        app:srcCompat="@drawable/ic_share_24" />
+        tools:srcCompat="@drawable/ic_share_24" />
 
     <TextView
         android:id="@+id/shareCount"
@@ -120,9 +120,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/text_spacing"
         android:layout_marginTop="@dimen/common_spacing"
-        android:text="5"
         app:layout_constraintStart_toEndOf="@id/share"
-        app:layout_constraintTop_toBottomOf="@id/content_barrier" />
+        app:layout_constraintTop_toBottomOf="@id/content_barrier"
+        tools:text="5" />
 
     <ImageButton
         android:id="@+id/views"
@@ -134,7 +134,7 @@
         android:contentDescription="@string/description_post_views"
         app:layout_constraintEnd_toStartOf="@id/viewsCount"
         app:layout_constraintTop_toBottomOf="@id/content_barrier"
-        app:srcCompat="@drawable/ic_views_24" />
+        tools:srcCompat="@drawable/ic_views_24" />
 
     <TextView
         android:id="@+id/viewsCount"
@@ -142,9 +142,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/text_spacing"
         android:layout_marginTop="@dimen/common_spacing"
-        android:text="5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content_barrier" />
+        app:layout_constraintTop_toBottomOf="@id/content_barrier"
+        tools:text="5" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
