@@ -1,7 +1,9 @@
 package ru.netology.nmedia.viewmodel
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryInMemoryImpl
@@ -19,6 +21,8 @@ class PostViewModel : ViewModel() {
     private val repository: PostRepository = PostRepositoryInMemoryImpl()
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
+    //val binding: ActivityMainBinding
+
 
     fun save() {
         edited.value?.let {
@@ -28,7 +32,12 @@ class PostViewModel : ViewModel() {
     }
 
     fun edit(post: Post) {
+        //binding.group.visibility = View.VISIBLE
         edited.value = post
+    }
+
+    fun cancelEdit(post: Post){
+        edited.value = empty
     }
 
     fun changeContent(content: String) {
@@ -39,6 +48,8 @@ class PostViewModel : ViewModel() {
             }
         }
     }
+
+
 
     fun removeById(id: Long) = repository.removeById(id)
 

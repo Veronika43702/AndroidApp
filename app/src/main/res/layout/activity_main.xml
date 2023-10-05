@@ -13,14 +13,81 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/barrier_bottom"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="65dp"
         tools:listitem="@layout/card_posts" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="edit_message, content_text, edit_sign, close_edit"/>
+
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="top"
-        app:constraint_referenced_ids="content, save" />
+        app:constraint_referenced_ids="content, save, edit_message, content_text, edit_sign, close_edit" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:layout_constraintBottom_toTopOf="@id/barrier_bottom"
+        app:constraint_referenced_ids="edit_message, content_text, edit_sign, close_edit" />
+
+    <TextView
+        android:id="@+id/edit_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_spacing"
+        android:background="@android:color/transparent"
+        android:text="@string/description_post_edit_message"
+        android:textColor="#54A9E7"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/content_text"
+        app:layout_constraintStart_toEndOf="@id/edit_sign" />
+
+    <EditText
+        android:id="@+id/content_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_spacing"
+        android:background="@android:color/transparent"
+        android:hint=""
+        android:maxLines="1"
+        android:importantForAutofill="no"
+        app:layout_constraintBottom_toTopOf="@id/content"
+        app:layout_constraintEnd_toStartOf="@id/close_edit"
+        app:layout_constraintStart_toEndOf="@id/edit_sign" />
+
+
+    <ImageView
+        android:id="@+id/edit_sign"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/description_post_edit"
+        android:src="@drawable/pencil_edit_button"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/content" />
+
+    <ImageButton
+        android:id="@+id/close_edit"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/description_post_edit"
+        android:src="@drawable/close"
+        app:layout_constraintBottom_toTopOf="@id/content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/content_text"/>
 
     <EditText
         android:id="@+id/content"
@@ -29,8 +96,8 @@
         android:background="@android:color/transparent"
         android:hint="@string/post_text"
         android:importantForAutofill="no"
-        android:maxLines="6"
         android:inputType="textMultiLine"
+        android:maxLines="6"
         android:padding="@dimen/common_spacing"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/save"
