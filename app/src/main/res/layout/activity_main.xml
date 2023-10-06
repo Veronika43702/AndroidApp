@@ -98,6 +98,8 @@
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/description_post_save"
         android:src="@drawable/ic_save_48"
