@@ -21,7 +21,7 @@
         android:id="@+id/group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="edit_message, content_text, edit_sign, close_edit"/>
 
     <androidx.constraintlayout.widget.Barrier
