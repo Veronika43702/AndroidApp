@@ -13,13 +13,15 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/barrier_bottom"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp"
         tools:listitem="@layout/card_posts" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         app:constraint_referenced_ids="edit_message, content_text, edit_sign, close_edit"/>
 
     <androidx.constraintlayout.widget.Barrier
@@ -34,21 +36,22 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/common_spacing"
+        android:layout_marginBottom="2dp"
         android:background="@android:color/transparent"
         android:text="@string/description_post_edit_message"
         android:textColor="#54A9E7"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/content_text"
         app:layout_constraintStart_toEndOf="@id/edit_sign" />
-    <EditText
+
+    <TextView
         android:id="@+id/content_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/common_spacing"
+        android:layout_marginEnd="@dimen/common_spacing"
         android:background="@android:color/transparent"
-        android:hint="@string/post_text"
-        android:maxLines="1"
-        android:inputType="textMultiLine"
+        android:singleLine="true"
         android:importantForAutofill="no"
         app:layout_constraintBottom_toTopOf="@id/content"
         app:layout_constraintEnd_toStartOf="@id/close_edit"

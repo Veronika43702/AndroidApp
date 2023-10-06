@@ -75,8 +75,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, R.string.error_empty_content, Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            viewModel.changeContent(text)
-            viewModel.save()
+            viewModel.changeContentAndSave(text.toString())
 
             binding.group.visibility = View.GONE
             binding.content.setText("")
