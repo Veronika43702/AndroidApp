@@ -6,7 +6,6 @@ import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.ActivityIntentHandlerBinding
-import ru.netology.nmedia.databinding.ActivityMainBinding
 
 class IntentHandlerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

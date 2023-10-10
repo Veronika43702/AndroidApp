@@ -4,13 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.viewModels
-import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.ActivityEditPostBinding
-import ru.netology.nmedia.databinding.ActivityNewPostBinding
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.AndroidUtils.focusAndShowKeyboard
-import ru.netology.nmedia.viewmodel.PostViewModel
 
 class EditPostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +18,7 @@ class EditPostActivity : AppCompatActivity() {
 
         val content = intent.getStringExtra(Intent.EXTRA_TEXT)
         binding.content.setText(content)
-        binding.contentText.setText(content)
+        binding.contentText.text = content
         binding.content.focusAndShowKeyboard()
 
 
