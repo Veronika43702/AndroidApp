@@ -33,9 +33,8 @@ class EditPostActivity : AppCompatActivity() {
         }
 
         binding.closeEdit.setOnClickListener {
-            setResult(Activity.RESULT_CANCELED)
+            setResult(Activity.RESULT_OK, Intent().putExtra(Intent.EXTRA_TEXT, content))
             finish()
         }
-
     }
 }

@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
                 editPostContract.launch(post.content)
-                //viewModel.cancelEdit()
             }
 
             override fun onRemove(post: Post) {
