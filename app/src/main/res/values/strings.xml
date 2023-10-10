@@ -14,4 +14,6 @@
     <string name="post_text">Post Text</string>
     <string name="menu_edit">Edit</string>
     <string name="error_empty_content">Content can\'t be empty</string>
+    <string name="chooser_share_post">Choose app for sending</string>
+    <string name="empty_text_error">Text must not be blank</string>
 </resources>
