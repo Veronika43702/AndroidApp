@@ -13,16 +13,10 @@
         android:theme="@style/Theme.Nmedia"
         tools:targetApi="31">
         <activity
-            android:name=".activity.EditPostActivityContract"
-            android:exported="false" />
-        <activity
             android:name=".activity.EditPostActivity"
             android:exported="false" />
         <activity
             android:name=".activity.NewPostActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.NewPostActivityContract"
             android:exported="false" />
         <activity
             android:name=".activity.IntentHandlerActivity"

@@ -33,7 +33,7 @@ class EditPostActivity : AppCompatActivity() {
         }
 
         binding.closeEdit.setOnClickListener {
-            AndroidUtils.hideKeyboard(it)
+            setResult(Activity.RESULT_CANCELED)
             finish()
         }
 
