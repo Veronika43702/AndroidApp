@@ -1,6 +1,7 @@
 package ru.netology.nmedia.activity
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.launch
@@ -26,8 +27,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val editPostContract = registerForActivityResult(EditPostActivityContract()) { result ->
-            result ?: return@registerForActivityResult
-            viewModel.changeContentAndSave(result)
+           result?.let{viewModel.changeContentAndSave(result)} ?: viewModel.cancelEdit()
         }
 
         val adapter = PostsAdapter(object : OnInteractionListener {
@@ -54,6 +54,14 @@ class MainActivity : AppCompatActivity() {
                 val shareIntent = Intent.createChooser(intent, null)
                 startActivity(shareIntent)
                 viewModel.share(post.id)
+            }
+
+            override fun openVideo(post: Post) {
+                val webpage: Uri = Uri.parse(post.video)
+                val intent = Intent(Intent.ACTION_VIEW, webpage)
+                if (intent.resolveActivity(packageManager) != null){
+                    startActivity(intent)
+                }
             }
 
         }
