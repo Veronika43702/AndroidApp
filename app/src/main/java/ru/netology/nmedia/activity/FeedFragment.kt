@@ -32,8 +32,10 @@ class FeedFragment : Fragment() {
         val viewModel: PostViewModel by activityViewModels()
 
         val adapter = PostsAdapter(object : OnInteractionListener {
+            // функция редактирования
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
+                // переход между фрагментами с передачей текста поста с ключом contentArg
                 findNavController().navigate(R.id.action_feedFragment_to_EditPostFragment, Bundle().apply{
                     contentArg = post.content
                 })
@@ -59,6 +61,7 @@ class FeedFragment : Fragment() {
                 viewModel.share(post.id)
             }
 
+            // открытие ссылки в youtube по клику на кнопку и поле картинки (после commit Fragment фукнция не проверялась)
             override fun openVideo(post: Post) {
                 val webpage: Uri = Uri.parse(post.video)
                 val intent = Intent(Intent.ACTION_VIEW, webpage)
@@ -69,6 +72,7 @@ class FeedFragment : Fragment() {
                 }
             }
 
+            // переход на фрагмент поста по клику на пост (кроме работающих кнопок) с передачей id поста через ключ idArg
             override fun onRoot(post: Post) {
                 findNavController().navigate(R.id.action_feedFragment_to_postFragment, Bundle().apply{
                     idArg = post.id
@@ -81,18 +85,21 @@ class FeedFragment : Fragment() {
 
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { posts ->
+            // проверка создания нового поста (размер стал больше)
             val newPost = adapter.currentList.size < posts.size
             adapter.submitList(posts) {
                 if (newPost) {
+                    // при новом посте отбражение списка с 1-ого элемента сверху (автопрокрутка)
                     binding.list.smoothScrollToPosition(0)
                 }
             }
         }
 
-
+        // переход на фрагмент создания поста по клику кнопки +
         binding.newPostButton.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
+
         return binding.root
     }
 }
