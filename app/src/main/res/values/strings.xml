@@ -7,6 +7,7 @@
     <string name="description_post_share">Share</string>
     <string name="description_post_views">Viewed</string>
     <string name="description_post_save">Save</string>
+    <string name="description_post_add">Add</string>
     <string name="description_post_edit">Edit</string>
     <string name="description_post_edit_message">Edit Message</string>
     <string name="menu_remove">Remove</string>

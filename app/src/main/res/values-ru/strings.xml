@@ -9,6 +9,7 @@
     <string name="description_post_views">Просмотрено</string>
     <string name="description_post_save">Сохранить</string>
     <string name="description_post_edit">Редактировать</string>
+    <string name="description_post_add">Добавить</string>
     <string name="description_post_edit_message">Редактировать сообщение</string>
     <string name="menu_edit">Изменить</string>
     <string name="menu_remove">Удалить</string>

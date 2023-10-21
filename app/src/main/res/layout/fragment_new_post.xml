@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.NewPostActivity">
+    tools:context=".activity.NewPostFragment">
 
     <EditText
         android:id="@+id/content"
@@ -27,6 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_anchor="@id/bottomAppBAr"
-        app:srcCompat="@drawable/save" />
+        app:srcCompat="@drawable/save"
+        android:contentDescription="@string/description_post_save" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
