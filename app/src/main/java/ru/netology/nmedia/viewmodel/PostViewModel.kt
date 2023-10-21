@@ -20,19 +20,25 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
 
+    // функция редактирования (очистка edited)
     fun edit(post: Post) {
         edited.value = post
     }
 
+    // функция сохранения изменений
     fun changeContentAndSave(content: String) {
+        // trim = обрезка пробелов в конце/спереди
         val text = content.trim()
+        // если изменений не было: очистка edited, выход из фукнции
         if (edited.value?.content == text) {
             edited.value = empty
             return
         }
+        // сохранение нового текста (text) в содержимое поста (content) через функцию сохранения в PostRepository (File, In Memory)
         edited.value?.let {
             repository.save(it.copy(content = text))
         }
+        // очистка edited
         edited.value = empty
     }
 

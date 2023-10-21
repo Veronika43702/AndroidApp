@@ -18,6 +18,7 @@ interface OnInteractionListener {
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun onShare(post: Post) {}
+    fun onRoot(post: Post) {}
 
     fun openVideo(post: Post) {}
 }
@@ -52,9 +53,7 @@ class PostViewHolder(
             viewsCount.text = Number.setNumberView(post.views)
             like.isChecked = post.likedByMe
 
-            if (post.video.isNullOrEmpty()){
-                binding.videoLayout.visibility = View.GONE
-            } else {
+            if (post.video.isNotEmpty()) {
                 binding.videoLayout.visibility = View.VISIBLE
             }
 
@@ -95,6 +94,10 @@ class PostViewHolder(
 
             video.setOnClickListener {
                 onInteractionListener.openVideo(post)
+            }
+
+            root.setOnClickListener {
+                onInteractionListener.onRoot(post)
             }
         }
 
