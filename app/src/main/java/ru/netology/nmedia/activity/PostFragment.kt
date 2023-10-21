@@ -13,9 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
-import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
-import ru.netology.nmedia.adapter.PostsAdapter
-import ru.netology.nmedia.adapter.OnInteractionListener
+import ru.netology.nmedia.activity.EditPostFragment.Companion.contentArg
 import ru.netology.nmedia.databinding.FragmentPostBinding
 import ru.netology.nmedia.dto.Number
 import ru.netology.nmedia.dto.Post
@@ -35,10 +33,6 @@ class PostFragment : Fragment() {
     ): View {
         val binding = FragmentPostBinding.inflate(layoutInflater, container, false)
         val viewModel by activityViewModels<PostViewModel>()
-
-        val editPostContract = registerForActivityResult(EditPostActivityContract()) { result ->
-            result?.let { viewModel.changeContentAndSave(result) } ?: viewModel.cancelEdit()
-        }
 
         val id = requireArguments().idArg
         viewModel.data.observe(viewLifecycleOwner) { posts ->
@@ -88,7 +82,9 @@ class PostFragment : Fragment() {
 
                                 R.id.edit -> {
                                     viewModel.edit(post)
-                                    editPostContract.launch(post.content)
+                                    findNavController().navigate(R.id.action_postFragment_to_editPostFragment, Bundle().apply{
+                                        contentArg = post.content
+                                    })
                                     true
                                 }
 

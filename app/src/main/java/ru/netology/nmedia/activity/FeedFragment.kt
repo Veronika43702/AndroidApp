@@ -10,9 +10,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
+import ru.netology.nmedia.activity.EditPostFragment.Companion.contentArg
 import ru.netology.nmedia.activity.PostFragment.Companion.idArg
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
@@ -31,14 +31,12 @@ class FeedFragment : Fragment() {
         val binding = FragmentFeedBinding.inflate(layoutInflater, container, false)
         val viewModel: PostViewModel by activityViewModels()
 
-        val editPostContract = registerForActivityResult(EditPostActivityContract()) { result ->
-            result?.let { viewModel.changeContentAndSave(result) } ?: viewModel.cancelEdit()
-        }
-
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
-                editPostContract.launch(post.content)
+                findNavController().navigate(R.id.action_feedFragment_to_EditPostFragment, Bundle().apply{
+                    contentArg = post.content
+                })
             }
 
             override fun onRemove(post: Post) {
@@ -72,7 +70,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onRoot(post: Post) {
-                findNavController().navigate(R.id.action_feedFragment_to_PostFragment, Bundle().apply{
+                findNavController().navigate(R.id.action_feedFragment_to_postFragment, Bundle().apply{
                     idArg = post.id
                 })
             }
