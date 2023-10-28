@@ -1,13 +1,17 @@
 package ru.netology.nmedia.activity
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
+import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
@@ -26,16 +30,32 @@ class NewPostFragment : Fragment() {
         // фокус (курсив) на поле текста
         binding.content.requestFocus()
 
-        // отображение полученной строки в поле редактирования поста
-        binding.content.setText(arguments?.textArg.orEmpty())
+        // отображение черновика в поле создания текста поста
+        binding.content.setText(viewModel.draft)
 
         binding.save.setOnClickListener {
             if (!binding.content.text.isNullOrBlank()) {
                 val content = binding.content.text.toString()
                 viewModel.changeContentAndSave(content)
+                viewModel.draft = ""
             }
             findNavController().navigateUp()
         }
+
+
+        // отмена сохранения поста с сохранением черновика через системную кнопку "назад"
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val content = binding.content.text.toString()
+                    viewModel.cancelSave(content)
+                    // скрытие клавиатуры
+                    AndroidUtils.hideKeyboard(binding.content)
+                    // переход назад
+                    findNavController().navigateUp()
+                }
+            }
+        )
         return binding.root
     }
 }
