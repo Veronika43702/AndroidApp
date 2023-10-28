@@ -22,7 +22,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     )
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
-    var draft: String  = ""
+    private var draft: String  = ""
 
     // функция редактирования (очистка edited)
     fun edit(post: Post) {
@@ -52,6 +52,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun cancelSave(content: String) {
         draft = content
+    }
+    fun clearDraft() {
+        draft = ""
+    }
+
+    fun getDraft(): String {
+        return draft
     }
 
     fun removeById(id: Long) = repository.removeById(id)
