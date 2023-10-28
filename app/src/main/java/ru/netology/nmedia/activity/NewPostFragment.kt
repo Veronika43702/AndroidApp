@@ -30,8 +30,8 @@ class NewPostFragment : Fragment() {
         // фокус (курсив) на поле текста
         binding.content.requestFocus()
 
-        // отображение черновика в поле создания текста поста
-        binding.content.setText(viewModel.draft)
+        // отображение черновика/intent от поделиться из др. приложения в поле создания текста поста
+        binding.content.setText(arguments?.textArg.orEmpty())
 
         binding.save.setOnClickListener {
             if (!binding.content.text.isNullOrBlank()) {

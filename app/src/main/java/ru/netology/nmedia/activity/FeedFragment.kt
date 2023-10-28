@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.EditPostFragment.Companion.contentArg
+import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostFragment.Companion.idArg
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
@@ -36,9 +37,11 @@ class FeedFragment : Fragment() {
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
                 // переход между фрагментами с передачей текста поста с ключом contentArg
-                findNavController().navigate(R.id.action_feedFragment_to_EditPostFragment, Bundle().apply{
-                    contentArg = post.content
-                })
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_EditPostFragment,
+                    Bundle().apply {
+                        contentArg = post.content
+                    })
             }
 
             override fun onRemove(post: Post) {
@@ -74,9 +77,11 @@ class FeedFragment : Fragment() {
 
             // переход на фрагмент поста по клику на пост (кроме работающих кнопок) с передачей id поста через ключ idArg
             override fun onRoot(post: Post) {
-                findNavController().navigate(R.id.action_feedFragment_to_postFragment, Bundle().apply{
-                    idArg = post.id
-                })
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_postFragment,
+                    Bundle().apply {
+                        idArg = post.id
+                    })
             }
 
         }
@@ -97,7 +102,11 @@ class FeedFragment : Fragment() {
 
         // переход на фрагмент создания поста по клику кнопки +
         binding.newPostButton.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            findNavController().navigate(
+                R.id.action_feedFragment_to_newPostFragment,
+                Bundle().apply {
+                    textArg = viewModel.draft
+                })
         }
 
         return binding.root
