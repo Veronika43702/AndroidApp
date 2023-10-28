@@ -23,8 +23,10 @@ class NewPostFragment : Fragment() {
     ): View? {
         val viewModel by activityViewModels<PostViewModel>()
         val binding = FragmentNewPostBinding.inflate(layoutInflater, container, false)
+        // фокус (курсив) на поле текста
         binding.content.requestFocus()
 
+        // отображение полученной строки в поле редактирования поста
         binding.content.setText(arguments?.textArg.orEmpty())
 
         binding.save.setOnClickListener {
