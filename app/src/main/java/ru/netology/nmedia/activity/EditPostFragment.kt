@@ -46,7 +46,7 @@ class EditPostFragment : Fragment() {
                 // присвоение текста из окна редактирования в переменную
                 val newContent = binding.content.text.toString()
                 // сохранение текста в пост (в PostViewModel)
-                viewModel.changeContentAndSave(newContent)
+                viewModel.editSave(newContent)
             }
             // навигация по фрагментам назад
             findNavController().navigateUp()

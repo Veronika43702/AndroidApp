@@ -25,6 +25,8 @@ class PublishedDateTime {
                 else -> {
                     if (localDateTime.format(formatterDate) == dt.format(formatterDate)) {
                         "сегодня в " + dt.format(formatterTime)
+                    } else if (localDateTime.year == dt.year && localDateTime.dayOfYear == dt.dayOfYear + 1) {
+                        "вчера в " + dt.format(formatterTime)
                     } else dt.format(formatter)
                 }
             }

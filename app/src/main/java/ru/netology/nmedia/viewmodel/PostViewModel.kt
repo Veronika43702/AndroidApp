@@ -31,7 +31,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // функция сохранения изменений
-    fun changeContentAndSave(content: String) {
+    fun saveNewPost(content: String) {
         // trim = обрезка пробелов в конце/спереди
         val text = content.trim()
         // если изменений не было: очистка edited, выход из фукнции
@@ -42,6 +42,23 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         // сохранение нового текста (text) в содержимое поста (content) через функцию сохранения в PostRepository (File, In Memory)
         edited.value?.let {
             repository.save(it.copy(content = text, published = LocalDateTime.now().toString()))
+        }
+        // очистка edited
+        edited.value = empty
+    }
+
+    // функция сохранения изменений
+    fun editSave(content: String) {
+        // trim = обрезка пробелов в конце/спереди
+        val text = content.trim()
+        // если изменений не было: очистка edited, выход из фукнции
+        if (edited.value?.content == text) {
+            edited.value = empty
+            return
+        }
+        // сохранение нового текста (text) в содержимое поста (content) через функцию сохранения в PostRepository (File, In Memory)
+        edited.value?.let {
+            repository.save(it.copy(content = text))
         }
         // очистка edited
         edited.value = empty

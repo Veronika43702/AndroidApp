@@ -34,7 +34,7 @@ class NewPostFragment : Fragment() {
         binding.save.setOnClickListener {
             if (!binding.content.text.isNullOrBlank()) {
                 val content = binding.content.text.toString()
-                viewModel.changeContentAndSave(content)
+                viewModel.saveNewPost(content)
                 viewModel.clearDraft()
             }
             findNavController().navigateUp()
