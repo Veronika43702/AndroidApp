@@ -64,7 +64,7 @@ class FeedFragment : Fragment() {
                 viewModel.share(post.id)
             }
 
-            // открытие ссылки в youtube по клику на кнопку и поле картинки (после commit Fragment фукнция не проверялась)
+            // открытие ссылки в youtube по клику на кнопку и поле картинки
             override fun openVideo(post: Post) {
                 val webpage: Uri = Uri.parse(post.video)
                 val intent = Intent(Intent.ACTION_VIEW, webpage)

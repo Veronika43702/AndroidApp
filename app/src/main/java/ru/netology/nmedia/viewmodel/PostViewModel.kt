@@ -13,7 +13,6 @@ private val empty = Post(
     id = 0,
     content = "",
     author = "",
-    likedByMe = false,
     published = ""
 )
 
@@ -23,28 +22,37 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     )
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
-    private var draft: String  = ""
-
-    // функция редактирования (очистка edited)
-    fun edit(post: Post) {
-        edited.value = post
-    }
+    private var draft: String = ""
 
     // функция сохранения изменений
     fun saveNewPost(content: String) {
         // trim = обрезка пробелов в конце/спереди
         val text = content.trim()
-        // если изменений не было: очистка edited, выход из фукнции
+        // если изменений не было: очистка edited, выход из фукнции (нужен ли это код?)
         if (edited.value?.content == text) {
             edited.value = empty
             return
         }
-        // сохранение нового текста (text) в содержимое поста (content) через функцию сохранения в PostRepository (File, In Memory)
+        // наполнение данными нового поста
+        edited.value = edited.value?.copy(
+            author = "me",
+            content = text,
+            published = LocalDateTime.now().toString()
+        )
+        // функция поиска ссылки на youtube и присваивание значения ссылки свойству video у поста
+        isVideoExists(content)
+
+        // сохранение поста
         edited.value?.let {
-            repository.save(it.copy(content = text, published = LocalDateTime.now().toString()))
+            repository.save(it)
         }
         // очистка edited
         edited.value = empty
+    }
+
+    // функция редактирования (edited = редактируемый пост)
+    fun edit(post: Post) {
+        edited.value = post
     }
 
     // функция сохранения изменений
@@ -57,9 +65,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         // сохранение нового текста (text) в содержимое поста (content) через функцию сохранения в PostRepository (File, In Memory)
+        edited.value = edited.value?.copy(content = text)
+        // функция поиска ссылки на youtube и присваивание значения ссылки свойству video у поста
+        isVideoExists(content)
+
+        // сохранение поста в репозитории
         edited.value?.let {
-            repository.save(it.copy(content = text))
+            repository.save(it)
         }
+
         // очистка edited
         edited.value = empty
     }
@@ -71,6 +85,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun cancelSave(content: String) {
         draft = content
     }
+
     fun clearDraft() {
         draft = ""
     }
@@ -84,4 +99,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun likeById(id: Long) = repository.likeById(id)
 
     fun share(id: Long) = repository.share(id)
+
+    private fun isVideoExists(content: String) {
+        if (content.lowercase().contains("https://www.youtube.com/") || content.lowercase().contains("https://youtube.com/")) {
+            val partsOfContent = content.split("\\s".toRegex())
+            for (part in partsOfContent) {
+                if (part.lowercase().startsWith("https://www.youtube.com/") ||
+                    part.lowercase().startsWith("https://youtube.com/")
+                ) {
+                    edited.value = edited.value?.copy(video = part)
+                }
+            }
+        } else {
+            edited.value = edited.value?.copy(video = "")
+        }
+    }
 }
