@@ -7,6 +7,7 @@ import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositorySQLiteImpl
+import java.time.LocalDateTime
 
 private val empty = Post(
     id = 0,
@@ -40,7 +41,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
         // сохранение нового текста (text) в содержимое поста (content) через функцию сохранения в PostRepository (File, In Memory)
         edited.value?.let {
-            repository.save(it.copy(content = text))
+            repository.save(it.copy(content = text, published = LocalDateTime.now().toString()))
         }
         // очистка edited
         edited.value = empty

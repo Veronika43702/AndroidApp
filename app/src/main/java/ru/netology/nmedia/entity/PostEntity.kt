@@ -5,17 +5,17 @@ import androidx.room.PrimaryKey
 import ru.netology.nmedia.dto.Post
 
 @Entity
-data class PostEntity (
+data class PostEntity constructor(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val author: String,
-    val published: String,
     val content: String,
-    val likedByMe: Boolean = false,
-    val likes: Int = 0,
-    val share: Int = 0,
-    val views: Int = 0,
-    val video: String = "",
+    val published: String,
+    val likedByMe: Boolean,
+    val likes: Int,
+    val share: Int,
+    val views: Int,
+    val video: String,
 ){
     fun toDto(): Post  = Post(
         id = id,

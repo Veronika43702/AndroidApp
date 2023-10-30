@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostsBinding
 import ru.netology.nmedia.dto.Number
-
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.PublishedDateTime
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -46,7 +46,7 @@ class PostViewHolder(
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
-            published.text = post.published
+            published.text = PublishedDateTime.getTime(post.published)
             content.text = post.content
             like.text = Number.setNumberView(post.likes)
             share.text = Number.setNumberView(post.share)

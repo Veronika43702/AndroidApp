@@ -17,6 +17,7 @@ import ru.netology.nmedia.activity.EditPostFragment.Companion.contentArg
 import ru.netology.nmedia.databinding.FragmentPostBinding
 import ru.netology.nmedia.dto.Number
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.PublishedDateTime
 import ru.netology.nmedia.util.LongArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
@@ -43,7 +44,7 @@ class PostFragment : Fragment() {
             }
             with(binding) {
                 author.text = post.author
-                published.text = post.published
+                published.text = PublishedDateTime.getTime(post.published)
                 content.text = post.content
                 like.text = Number.setNumberView(post.likes)
                 share.text = Number.setNumberView(post.share)
