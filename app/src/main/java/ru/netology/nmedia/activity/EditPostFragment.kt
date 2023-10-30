@@ -46,7 +46,7 @@ class EditPostFragment : Fragment() {
                 // присвоение текста из окна редактирования в переменную
                 val newContent = binding.content.text.toString()
                 // сохранение текста в пост (в PostViewModel)
-                viewModel.editSave(newContent)
+                viewModel.editPost(newContent)
             } else {
                 // если текст пустой, то пост не сохраняем и очищаем edited
                 viewModel.cancelEdit()

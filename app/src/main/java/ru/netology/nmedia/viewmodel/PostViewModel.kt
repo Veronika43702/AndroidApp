@@ -21,11 +21,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         AppDb.getInstance(application).postDao
     )
     val data = repository.getAll()
-    val edited = MutableLiveData(empty)
+    private val edited = MutableLiveData(empty)
     private var draft: String = ""
 
-    // функция сохранения изменений
-    fun saveNewPost(content: String) {
+    // функция наполнения и сохранения нового поста
+    fun configureNewPost(content: String) {
         // trim = обрезка пробелов в конце/спереди
         val text = content.trim()
         // если изменений не было: очистка edited, выход из фукнции (нужен ли это код?)
@@ -39,15 +39,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             content = text,
             published = LocalDateTime.now().toString()
         )
-        // функция поиска ссылки на youtube и присваивание значения ссылки свойству video у поста
-        isVideoExists(content)
-
-        // сохранение поста
-        edited.value?.let {
-            repository.save(it)
-        }
-        // очистка edited
-        edited.value = empty
+        // сохраняем пост, предварительно поискав ссылку на youtube, и очищаем edited
+        savePost(content)
     }
 
     // функция редактирования (edited = редактируемый пост)
@@ -55,8 +48,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = post
     }
 
-    // функция сохранения изменений
-    fun editSave(content: String) {
+    // функция сохранения изменений при редактировании поста
+    fun editPost(content: String) {
         // trim = обрезка пробелов в конце/спереди
         val text = content.trim()
         // если изменений не было: очистка edited, выход из фукнции
@@ -66,6 +59,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
         // сохранение нового текста (text) в содержимое поста (content) через функцию сохранения в PostRepository (File, In Memory)
         edited.value = edited.value?.copy(content = text)
+
+        // сохраняем пост, предварительно поискав ссылку на youtube, и очищаем edited
+        savePost(content)
+
+    }
+
+    private fun savePost(content: String){
         // функция поиска ссылки на youtube и присваивание значения ссылки свойству video у поста
         isVideoExists(content)
 
