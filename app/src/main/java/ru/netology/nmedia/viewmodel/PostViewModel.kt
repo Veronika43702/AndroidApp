@@ -82,6 +82,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = empty
     }
 
+    // функции для отмены сохранения нового поста и сохранения черновика для отображения текста черновика при создании нового поста
     fun cancelSave(content: String) {
         draft = content
     }
@@ -101,11 +102,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun share(id: Long) = repository.share(id)
 
     private fun isVideoExists(content: String) {
-        if (content.lowercase().contains("https://www.youtube.com/") || content.lowercase().contains("https://youtube.com/")) {
+        if (content.lowercase().contains("https://www.youtu") || content.lowercase().contains("https://youtu")) {
             val partsOfContent = content.split("\\s".toRegex())
             for (part in partsOfContent) {
-                if (part.lowercase().startsWith("https://www.youtube.com/") ||
-                    part.lowercase().startsWith("https://youtube.com/")
+                if (part.lowercase().startsWith("https://www.youtu") ||
+                    part.lowercase().startsWith("https://youtu")
                 ) {
                     edited.value = edited.value?.copy(video = part)
                 }

@@ -34,7 +34,7 @@ class PublishedDateTime {
 
 
         fun getMinuteWord(minutes: Int): String {
-            return when (minutes) {
+            return when (minutes % 10) {
                 1 -> " минуту"
                 2, 3, 4 -> " минуты"
                 else -> " минут"
