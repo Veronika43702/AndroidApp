@@ -65,7 +65,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
-    private fun savePost(content: String){
+    private fun savePost(content: String) {
         // функция поиска ссылки на youtube и присваивание значения ссылки свойству video у поста
         isVideoExists(content)
 
@@ -102,11 +102,17 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun share(id: Long) = repository.share(id)
 
     private fun isVideoExists(content: String) {
-        if (content.lowercase().contains("https://www.youtu") || content.lowercase().contains("https://youtu")) {
+        if (content.lowercase().contains("https://www.youtu") ||
+            content.lowercase().contains("https://youtu") ||
+            content.lowercase().contains("http://www.youtu") ||
+            content.lowercase().contains("http://youtu")
+        ) {
             val partsOfContent = content.split("\\s".toRegex())
             for (part in partsOfContent) {
                 if (part.lowercase().startsWith("https://www.youtu") ||
-                    part.lowercase().startsWith("https://youtu")
+                    part.lowercase().startsWith("https://youtu") ||
+                    part.lowercase().startsWith("http://www.youtu") ||
+                    part.lowercase().startsWith("http://youtu")
                 ) {
                     edited.value = edited.value?.copy(video = part)
                 }

@@ -99,6 +99,10 @@ class PostViewHolder(
             root.setOnClickListener {
                 onInteractionListener.onRoot(post)
             }
+
+            content.setOnClickListener {
+                onInteractionListener.onRoot(post)
+            }
         }
 
     }
