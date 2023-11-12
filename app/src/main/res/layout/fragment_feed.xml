@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="-78dp"
+        android:backgroundTint="#10000000"
         tools:listitem="@layout/card_posts" />
 
 

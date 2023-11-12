@@ -21,6 +21,13 @@
 
     <string name="cancel_edit_message">Вы уверены, что хотите отменить изменения?</string>
     <string name="cancel_edit_title">Отмена изменений</string>
+    <string name="description_post_was_edited">изменено</string>
+
+    <string name="google_play_unavailable">Google Api Недоступно</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+    <string name="notification_user_newpost">%1$s опубликовал новый пост:</string>
+    <string name="channel_remote_name">Уведомления с сервера</string>
+    <string name="channel_remote_description">Уведомления с удалённого сервера</string>
 
     <string name="choice_yes">Да</string>
     <string name="choice_no">Нет</string>

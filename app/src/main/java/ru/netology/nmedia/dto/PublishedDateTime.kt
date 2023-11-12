@@ -7,6 +7,10 @@ import java.time.temporal.ChronoUnit
 class PublishedDateTime {
     companion object {
         fun getTime(publishedDate: String): String {
+            var edited = ""
+            if (publishedDate.length > 23) {
+                edited = publishedDate.substring(23,)
+            }
             val newStr = publishedDate.replace("T", " ").substring(0, 19)
             val formatterFromString = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val dt = LocalDateTime.parse(newStr, formatterFromString)
@@ -17,7 +21,7 @@ class PublishedDateTime {
             val formatterTime = DateTimeFormatter.ofPattern("HH:mm")
 
             val minutesFromLocal = (localDateTime.hour * 60 + localDateTime.minute) - (dt.hour * 60 + dt.minute)
-            return when (ChronoUnit.MINUTES.between(dt, localDateTime)) {
+            val dateAndTime = when (ChronoUnit.MINUTES.between(dt, localDateTime)) {
                 in 0..59 -> minutesFromLocal.toString() + getMinuteWord(minutesFromLocal) + " назад"
                 in 60..119 -> "час назад"
                 in 120..179 -> "два часа назад"
@@ -30,6 +34,7 @@ class PublishedDateTime {
                     } else dt.format(formatter)
                 }
             }
+            return dateAndTime + edited
         }
 
 

@@ -3,6 +3,7 @@ package ru.netology.nmedia.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import ru.netology.nmedia.R
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
@@ -58,11 +59,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         // сохранение нового текста (text) в содержимое поста (content) через функцию сохранения в PostRepository (File, In Memory)
-        edited.value = edited.value?.copy(content = text)
+        if (edited.value?.published?.length!! < 26){
+            edited.value = edited.value?.copy(content = text, published = edited.value?.published + " (изменено)")
+        } else edited.value = edited.value?.copy(content = text)
+
 
         // сохраняем пост, предварительно поискав ссылку на youtube, и очищаем edited
         savePost(content)
-
     }
 
     private fun savePost(content: String) {

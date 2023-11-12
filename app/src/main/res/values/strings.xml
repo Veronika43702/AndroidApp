@@ -19,6 +19,13 @@
     <string name="empty_text_error">Text must not be blank</string>
     <string name="cancel_edit_message">Are you sure you want to cancel changes?</string>
     <string name="cancel_edit_title">Unsaved Changes</string>
+    <string name="description_post_was_edited">edited</string>
+
+    <string name="google_play_unavailable">Google Api Unavailable</string>
+    <string name="notification_user_liked">User %1$s liked %2$s\'s post</string>
+    <string name="notification_user_newpost">%1$s published a new post:</string>
+    <string name="channel_remote_name">Server notifications</string>
+    <string name="channel_remote_description">Notifications from remote server</string>
 
     <string name="choice_yes">Yes</string>
     <string name="choice_no">No</string>
