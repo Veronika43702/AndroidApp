@@ -46,16 +46,16 @@ class PostViewHolder(
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
-            published.text = PublishedDateTime.getTime(post.published)
+            published.text = post.published //PublishedDateTime.getTime(post.published)
             content.text = post.content
             like.text = Number.setNumberView(post.likes)
             share.text = Number.setNumberView(post.share)
             viewsCount.text = Number.setNumberView(post.views)
             like.isChecked = post.likedByMe
 
-            if (post.video.isNotEmpty()) {
-                binding.videoLayout.visibility = View.VISIBLE
-            }
+//            if (post.video.isNotEmpty()) {
+//                binding.videoLayout.visibility = View.VISIBLE
+//            }
 
             like.setOnClickListener {
                 onInteractionListener.onLike(post)

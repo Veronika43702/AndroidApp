@@ -31,4 +31,8 @@
 
     <string name="choice_yes">Да</string>
     <string name="choice_no">Нет</string>
+
+    <string name="retry_loading">Повторить</string>
+    <string name="empty_posts">Постов нет.\nЕсли создадите новый пост, то он появится здесь</string>
+    <string name="error_loading">Что-то пошло не так. Попробуйте позднее</string>
 </resources>

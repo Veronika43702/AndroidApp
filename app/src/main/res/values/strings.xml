@@ -29,4 +29,8 @@
 
     <string name="choice_yes">Yes</string>
     <string name="choice_no">No</string>
+
+    <string name="retry_loading">Retry</string>
+    <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
+    <string name="error_loading">Something went wrong. Try again later</string>
 </resources>

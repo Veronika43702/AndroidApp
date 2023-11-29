@@ -19,13 +19,18 @@ class NewPostFragment : Fragment() {
         var Bundle.textArg: String? by StringArg
     }
 
+    private val viewModel: PostViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val viewModel by activityViewModels<PostViewModel>()
-        val binding = FragmentNewPostBinding.inflate(layoutInflater, container, false)
+        val binding = FragmentNewPostBinding.inflate(
+            inflater,
+            container,
+            false)
         // фокус (курсив) на поле текста
         binding.content.requestFocus()
 
@@ -33,14 +38,16 @@ class NewPostFragment : Fragment() {
         binding.content.setText(arguments?.textArg.orEmpty())
 
         binding.save.setOnClickListener {
-            if (!binding.content.text.isNullOrBlank()) {
-                val content = binding.content.text.toString()
-                viewModel.configureNewPost(content)
-                viewModel.clearDraft()
-            }
+            viewModel.configureNewPost(binding.content.text.toString())
+            viewModel.savePost()
+            viewModel.clearDraft()
+            AndroidUtils.hideKeyboard(requireView())
             findNavController().navigateUp()
         }
-
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
+            findNavController().navigateUp()
+        }
 
         // отмена сохранения поста с сохранением черновика через системную кнопку "назад"
         requireActivity().onBackPressedDispatcher.addCallback(

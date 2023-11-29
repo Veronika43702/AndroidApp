@@ -2,13 +2,16 @@ package ru.netology.nmedia.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import ru.netology.nmedia.R
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositorySQLiteImpl
+import ru.netology.nmedia.repository.PostRepositoryImpl
+import ru.netology.nmedia.util.SingleLiveEvent
+import java.io.IOException
 import java.time.LocalDateTime
+import kotlin.concurrent.thread
 
 private val empty = Post(
     id = 0,
@@ -18,12 +21,35 @@ private val empty = Post(
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository = PostRepositorySQLiteImpl(
-        AppDb.getInstance(application).postDao
-    )
-    val data = repository.getAll()
-    private val edited = MutableLiveData(empty)
+    private val repository: PostRepository = PostRepositoryImpl()
+    private val _state = MutableLiveData(FeedModel())
+    val data: LiveData<FeedModel>
+        get() = _state
+    val edited = MutableLiveData(empty)
     private var draft: String = ""
+    private val _postCreated = SingleLiveEvent<Unit>()
+    val postCreated: LiveData<Unit>
+        get() = _postCreated
+
+    init {
+        loadPosts()
+    }
+
+
+    fun loadPosts() {
+        thread {
+            // Начинаем загрузку
+            _state.postValue(FeedModel(loading = true))
+            try {
+                // Данные успешно получены
+                val posts = repository.getAll()
+                _state.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
+            } catch (e: Exception) {
+                // Получена ошибка
+                _state.postValue(FeedModel(error = true))
+            }
+        }
+    }
 
     // функция наполнения и сохранения нового поста
     fun configureNewPost(content: String) {
@@ -35,13 +61,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         // наполнение данными нового поста
-        edited.value = edited.value?.copy(
-            author = "me",
-            content = text,
-            published = LocalDateTime.now().toString()
-        )
-        // сохраняем пост, предварительно поискав ссылку на youtube, и очищаем edited
-        savePost(content)
+        edited.value = edited.value?.copy(content = text)
     }
 
     // функция редактирования (edited = редактируемый пост)
@@ -59,22 +79,21 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         // сохранение нового текста (text) в содержимое поста (content) через функцию сохранения в PostRepository (File, In Memory)
-        if (edited.value?.published?.length!! < 26){
-            edited.value = edited.value?.copy(content = text, published = edited.value?.published + " (изменено)")
-        } else edited.value = edited.value?.copy(content = text)
-
-
-        // сохраняем пост, предварительно поискав ссылку на youtube, и очищаем edited
-        savePost(content)
+        edited.value = edited.value?.copy(content = text)
     }
 
-    private fun savePost(content: String) {
+    fun savePost() {
+        println("текст поста в начале функции: "+ edited.value?.content)
         // функция поиска ссылки на youtube и присваивание значения ссылки свойству video у поста
-        isVideoExists(content)
+        //isVideoExists(content)
 
         // сохранение поста в репозитории
         edited.value?.let {
-            repository.save(it)
+            thread {
+                repository.save(it)
+                loadPosts()
+                edited.postValue(empty)
+            }
         }
 
         // очистка edited
@@ -98,9 +117,25 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         return draft
     }
 
-    fun removeById(id: Long) = repository.removeById(id)
+    fun removeById(id: Long) {
+//        thread {
+//            val old = _state.value?.posts.orEmpty()
+//            _state.postValue(
+//                _state.value?.copy(posts = _state.value?.posts.orEmpty()
+//                    .filter { it.id != id }
+//                )
+//            )
+//            try {
+//                repository.removeById(id)
+//            } catch (e: IOException) {
+//                _state.postValue(_state.value?.copy(posts = old))
+//            }
+//        }
+    }
 
-    fun likeById(id: Long) = repository.likeById(id)
+    fun likeById(id: Long) {
+        thread { repository.likeById(id) }
+    }
 
     fun share(id: Long) = repository.share(id)
 

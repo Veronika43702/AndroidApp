@@ -82,16 +82,21 @@ class PostFragment : Fragment() {
         }
         )
 
-        binding.listOfOnePost.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner)
-        { posts ->
-            val listOfOnePost = posts.filter { it.id == id }
-            if (listOfOnePost.isEmpty()) {
-                findNavController().navigateUp()
-                return@observe
-            }
-            adapter.submitList(listOfOnePost)
+        //binding.listOfOnePost.adapter = adapter
+
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts.filter { it.id == id })
         }
+
+//        viewModel.data.observe(viewLifecycleOwner)
+//        { posts ->
+//            val listOfOnePost = posts //.filter { it.id == id }
+//            if (listOfOnePost.isEmpty()) {
+//                findNavController().navigateUp()
+//                return@observe
+//            }
+//            adapter.submitList(listOfOnePost)
+//        }
 
         return binding.root
     }
