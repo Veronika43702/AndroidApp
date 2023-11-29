@@ -83,7 +83,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun savePost() {
-        println("текст поста в начале функции: "+ edited.value?.content)
         // функция поиска ссылки на youtube и присваивание значения ссылки свойству video у поста
         //isVideoExists(content)
 
@@ -118,19 +117,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeById(id: Long) {
-//        thread {
-//            val old = _state.value?.posts.orEmpty()
-//            _state.postValue(
-//                _state.value?.copy(posts = _state.value?.posts.orEmpty()
-//                    .filter { it.id != id }
-//                )
-//            )
-//            try {
-//                repository.removeById(id)
-//            } catch (e: IOException) {
-//                _state.postValue(_state.value?.copy(posts = old))
-//            }
-//        }
+        thread {
+            val old = _state.value?.posts.orEmpty()
+            try {
+                repository.removeById(id)
+                loadPosts()
+            } catch (e: IOException) {
+                _state.postValue(FeedModel(posts = old))
+                loadPosts()
+            }
+        }
     }
 
     fun likeById(id: Long) {

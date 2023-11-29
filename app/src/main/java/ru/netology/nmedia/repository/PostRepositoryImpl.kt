@@ -61,6 +61,7 @@ class PostRepositoryImpl: PostRepository {
             .delete()
             .url("${BASE_URL}/api/slow/posts/$id")
             .build()
+        println("deletion of post")
 
         client.newCall(request)
             .execute()
