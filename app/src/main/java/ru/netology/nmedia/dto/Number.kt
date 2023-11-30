@@ -4,6 +4,7 @@ class Number {
     companion object {
         fun setNumberView(number: Int): String {
             return when (number) {
+                in -100..-1 -> "-0"
                 in 0..999 -> number.toString()
                 in 1000..9999 -> {
                     val firstDigit = number.toString()[0]

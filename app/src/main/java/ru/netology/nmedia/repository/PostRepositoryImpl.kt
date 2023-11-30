@@ -10,7 +10,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import ru.netology.nmedia.dto.Post
 import java.util.concurrent.TimeUnit
 
-class PostRepositoryImpl: PostRepository {
+class PostRepositoryImpl : PostRepository {
     // Сетевой вызов с тайм-аутом 30 секунд для обработки
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
@@ -48,8 +48,26 @@ class PostRepositoryImpl: PostRepository {
         return gson.fromJson(responseText, Post::class.java)
     }
 
-    override fun likeById(id: Long) {
-        // TODO: do this in homework
+    override fun likeById(id: Long): Post {
+        val post = getAll().find { it.id == id }
+        val request: Request =
+            if (post?.likedByMe == false) {
+                Request.Builder()
+                    .post(gson.toJson(post).toRequestBody(jsonType))
+                    .url("${BASE_URL}/api/posts/$id/likes")
+                    .build()
+            } else {
+                Request.Builder()
+                    .delete()
+                    .url("${BASE_URL}/api/posts/$id/likes")
+                    .build()
+            }
+
+        val call = client.newCall(request)
+        val response = call.execute()
+        val body = requireNotNull(response.body)
+        val responseText = body.string()
+        return gson.fromJson(responseText, Post::class.java)
     }
 
     override fun share(id: Long) {
@@ -61,7 +79,6 @@ class PostRepositoryImpl: PostRepository {
             .delete()
             .url("${BASE_URL}/api/slow/posts/$id")
             .build()
-        println("deletion of post")
 
         client.newCall(request)
             .execute()
