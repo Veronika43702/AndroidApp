@@ -100,6 +100,11 @@ class FeedFragment : Fragment() {
             viewModel.loadPosts()
         }
 
+        binding.swiperefresh.setOnRefreshListener {
+            viewModel.loadPosts()
+            binding.swiperefresh.isRefreshing = false
+        }
+
         // переход на фрагмент создания поста по клику кнопки +
         binding.newPostButton.setOnClickListener {
             findNavController().navigate(

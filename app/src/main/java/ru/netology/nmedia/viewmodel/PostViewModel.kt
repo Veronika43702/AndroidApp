@@ -51,6 +51,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+
     // функция наполнения и сохранения нового поста
     fun configureNewPost(content: String) {
         // trim = обрезка пробелов в конце/спереди
