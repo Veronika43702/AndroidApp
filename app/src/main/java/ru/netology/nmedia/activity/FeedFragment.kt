@@ -66,15 +66,15 @@ class FeedFragment : Fragment() {
             }
 
             // открытие ссылки в youtube по клику на кнопку и поле картинки
-            override fun openVideo(post: Post) {
-                val webpage: Uri = Uri.parse(post.video)
-                val intent = Intent(Intent.ACTION_VIEW, webpage)
-                try {
-                    startActivity(intent)
-                } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, "No suitable app found!", Toast.LENGTH_SHORT).show()
-                }
-            }
+//            override fun openVideo(post: Post) {
+//                val webpage: Uri = Uri.parse(post.video)
+//                val intent = Intent(Intent.ACTION_VIEW, webpage)
+//                try {
+//                    startActivity(intent)
+//                } catch (e: ActivityNotFoundException) {
+//                    Toast.makeText(context, "No suitable app found!", Toast.LENGTH_SHORT).show()
+//                }
+//            }
 
             // переход на фрагмент поста по клику на пост (кроме работающих кнопок) с передачей id поста через ключ idArg
             override fun onRoot(post: Post) {

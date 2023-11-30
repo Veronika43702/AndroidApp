@@ -17,12 +17,12 @@ private val empty = Post(
     id = 0,
     content = "",
     author = "",
-    published = ""
+    published = "",
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository = PostRepositoryImpl()
-    private val _state = MutableLiveData(FeedModel())
+    private var _state = MutableLiveData(FeedModel())
     val data: LiveData<FeedModel>
         get() = _state
     val edited = MutableLiveData(empty)
@@ -50,7 +50,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-
 
     // функция наполнения и сохранения нового поста
     fun configureNewPost(content: String) {
@@ -85,7 +84,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun savePost() {
         // функция поиска ссылки на youtube и присваивание значения ссылки свойству video у поста
-        //isVideoExists(content)
+        // isVideoExists(content)
 
         // сохранение поста в репозитории
         edited.value?.let {
@@ -120,43 +119,61 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun removeById(id: Long) {
         thread {
             val old = _state.value?.posts.orEmpty()
+            _state.postValue(
+                FeedModel(
+                    posts = _state.value?.posts.orEmpty().filter { it.id != id })
+            )
             try {
                 repository.removeById(id)
-                loadPosts()
             } catch (e: IOException) {
                 _state.postValue(FeedModel(posts = old))
-                loadPosts()
             }
         }
+
+//        thread {
+//            val old = _state.value?.posts.orEmpty()
+//            _state.postValue(
+//                _state.value?.copy(posts = _state.value?.posts.orEmpty()
+//                    .filter { it.id != id }
+//                )
+//            )
+//            try {
+//                repository.removeById(id)
+//            } catch (e: IOException) {
+//                _state.postValue(_state.value?.copy(posts = old))
+//            }
+//        }
     }
 
     fun likeById(id: Long) {
         thread {
-            repository.likeById(id)
-            loadPosts()
+            val postLiked = repository.likeById(id)
+            _state.postValue(FeedModel(posts = _state.value?.posts.orEmpty()
+                .map{ if (it.id == id) postLiked else it }))
+
         }
     }
 
-    fun share(id: Long) = repository.share(id)
+fun share(id: Long) = repository.share(id)
 
-    private fun isVideoExists(content: String) {
-        if (content.lowercase().contains("https://www.youtu") ||
-            content.lowercase().contains("https://youtu") ||
-            content.lowercase().contains("http://www.youtu") ||
-            content.lowercase().contains("http://youtu")
-        ) {
-            val partsOfContent = content.split("\\s".toRegex())
-            for (part in partsOfContent) {
-                if (part.lowercase().startsWith("https://www.youtu") ||
-                    part.lowercase().startsWith("https://youtu") ||
-                    part.lowercase().startsWith("http://www.youtu") ||
-                    part.lowercase().startsWith("http://youtu")
-                ) {
-                    edited.value = edited.value?.copy(video = part)
-                }
-            }
-        } else {
-            edited.value = edited.value?.copy(video = "")
-        }
-    }
+//    private fun isVideoExists(content: String) {
+//        if (content.lowercase().contains("https://www.youtu") ||
+//            content.lowercase().contains("https://youtu") ||
+//            content.lowercase().contains("http://www.youtu") ||
+//            content.lowercase().contains("http://youtu")
+//        ) {
+//            val partsOfContent = content.split("\\s".toRegex())
+//            for (part in partsOfContent) {
+//                if (part.lowercase().startsWith("https://www.youtu") ||
+//                    part.lowercase().startsWith("https://youtu") ||
+//                    part.lowercase().startsWith("http://www.youtu") ||
+//                    part.lowercase().startsWith("http://youtu")
+//                ) {
+//                    edited.value = edited.value?.copy(video = part)
+//                }
+//            }
+//        } else {
+//            edited.value = edited.value?.copy(video = "")
+//        }
+//    }
 }

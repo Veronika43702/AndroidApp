@@ -70,15 +70,15 @@ class PostFragment : Fragment() {
             }
 
             // открытие ссылки в youtube по клику на кнопку и поле картинки
-            override fun openVideo(post: Post) {
-                val webpage: Uri = Uri.parse(post.video)
-                val intent = Intent(Intent.ACTION_VIEW, webpage)
-                try {
-                    startActivity(intent)
-                } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, "No suitable app found!", Toast.LENGTH_SHORT).show()
-                }
-            }
+//            override fun openVideo(post: Post) {
+//                val webpage: Uri = Uri.parse(post.video)
+//                val intent = Intent(Intent.ACTION_VIEW, webpage)
+//                try {
+//                    startActivity(intent)
+//                } catch (e: ActivityNotFoundException) {
+//                    Toast.makeText(context, "No suitable app found!", Toast.LENGTH_SHORT).show()
+//                }
+//            }
         }
         )
 

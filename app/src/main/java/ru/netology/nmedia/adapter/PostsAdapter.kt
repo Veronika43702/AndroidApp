@@ -88,13 +88,13 @@ class PostViewHolder(
                 }.show()
             }
 
-            videoButton.setOnClickListener {
-                onInteractionListener.openVideo(post)
-            }
+//            videoButton.setOnClickListener {
+//                onInteractionListener.openVideo(post)
+//            }
 
-            video.setOnClickListener {
-                onInteractionListener.openVideo(post)
-            }
+//            video.setOnClickListener {
+//                onInteractionListener.openVideo(post)
+//            }
 
             root.setOnClickListener {
                 onInteractionListener.onRoot(post)
