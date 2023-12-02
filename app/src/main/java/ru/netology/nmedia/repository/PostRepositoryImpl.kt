@@ -61,9 +61,7 @@ class PostRepositoryImpl : PostRepository {
         client.newCall(request)
                 .enqueue(object : Callback {
                     override fun onResponse(call: Call, response: Response) {
-                        if (!response.isSuccessful) {
-                            throw Exception()
-                        }
+                        callback.onSuccess(id)
                     }
                     override fun onFailure(call: Call, e: IOException) {
                         callback.onError(e)

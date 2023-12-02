@@ -49,12 +49,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeByIdAsync(id: Long) {
-        _state.postValue(
-            _state.value?.copy(posts = _state.value?.posts.orEmpty()
-                .filter { it.id != id }
-            )
-        )
-        repository.removeByIdAsync(id, object : PostRepository.Callback<Long>{})
+        val old = _state.value?.posts.orEmpty()
+        repository.removeByIdAsync(id, object : PostRepository.Callback<Long> {
+            override fun onSuccess(data: Long) {
+                _state.postValue(FeedModel(posts = _state.value?.posts.orEmpty()
+                        .filter { it.id != id }
+                    )
+                )
+            }
+
+            override fun onError(e: Exception) {
+                _state.postValue(FeedModel(posts = old))
+            }
+        })
     }
 
     fun savePostAsync() {
