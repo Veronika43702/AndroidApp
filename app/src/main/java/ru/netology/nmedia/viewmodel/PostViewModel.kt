@@ -10,7 +10,6 @@ import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
 import java.io.IOException
-import java.time.LocalDateTime
 import kotlin.concurrent.thread
 
 private val empty = Post(
@@ -22,7 +21,7 @@ private val empty = Post(
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository = PostRepositoryImpl()
-    private var _state = MutableLiveData(FeedModel())
+    private val _state = MutableLiveData(FeedModel())
     val data: LiveData<FeedModel>
         get() = _state
     val edited = MutableLiveData(empty)
@@ -37,19 +36,58 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun loadPosts() {
-        thread {
-            // Начинаем загрузку
-            _state.postValue(FeedModel(loading = true))
-            try {
-                // Данные успешно получены
-                val posts = repository.getAll()
-                _state.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
-            } catch (e: Exception) {
-                // Получена ошибка
+        _state.value = (FeedModel(loading = true))
+        repository.getAllAsync(object : PostRepository.Callback<List<Post>> {
+            override fun onSuccess(data: List<Post>) {
+                _state.postValue(FeedModel(posts = data, empty = data.isEmpty()))
+            }
+
+            override fun onError(e: Exception) {
                 _state.postValue(FeedModel(error = true))
             }
+        })
+    }
+
+    fun removeByIdAsync(id: Long) {
+        _state.postValue(
+            _state.value?.copy(posts = _state.value?.posts.orEmpty()
+                .filter { it.id != id }
+            )
+        )
+        repository.removeByIdAsync(id, object : PostRepository.Callback<Long>{})
+    }
+
+    fun savePostAsync() {
+        val posts = _state.value?.posts.orEmpty()
+        _state.value = (FeedModel(loading = true))
+        // сохранение поста в репозитории
+        edited.value?.let {
+            repository.saveAsync(it, object : PostRepository.Callback<Post> {
+                override fun onSuccess(data: Post) {
+                    _state.postValue(FeedModel(posts = listOf(data) + posts)
+                    )
+                }
+                override fun onError(e: Exception) {
+                    _state.postValue(FeedModel(error = true))
+                }
+            })
+            edited.postValue(empty)
+
         }
     }
+
+    fun likeByPostAsync(post: Post) {
+            repository.likeByPostAsync(post, object : PostRepository.Callback<Post>{
+                override fun onSuccess(data: Post) {
+                    _state.postValue(FeedModel(posts = _state.value?.posts.orEmpty()
+                        .map{ if (it.id == post.id) data else it }))
+                }
+
+                override fun onError(e: Exception) {
+                    _state.postValue(FeedModel(error = true))
+                }
+            })
+        }
 
     // функция наполнения и сохранения нового поста
     fun configureNewPost(content: String) {
@@ -82,22 +120,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = edited.value?.copy(content = text)
     }
 
-    fun savePost() {
-        // функция поиска ссылки на youtube и присваивание значения ссылки свойству video у поста
-        // isVideoExists(content)
-
-        // сохранение поста в репозитории
-        edited.value?.let {
-            thread {
-                repository.save(it)
-                loadPosts()
-                edited.postValue(empty)
-            }
-        }
-
-        // очистка edited
-        edited.value = empty
-    }
+//    fun savePost() {
+//        // функция поиска ссылки на youtube и присваивание значения ссылки свойству video у поста
+//        // isVideoExists(content)
+//
+//        // сохранение поста в репозитории
+//        edited.value?.let {
+//            thread {
+//                repository.save(it)
+//                //loadPosts()
+//                edited.postValue(empty)
+//            }
+//        }
+//    }
 
     fun cancelEdit() {
         edited.value = empty
@@ -116,20 +151,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         return draft
     }
 
-    fun removeById(id: Long) {
-        thread {
-            val old = _state.value?.posts.orEmpty()
-            _state.postValue(
-                FeedModel(
-                    posts = _state.value?.posts.orEmpty().filter { it.id != id })
-            )
-            try {
-                repository.removeById(id)
-            } catch (e: IOException) {
-                _state.postValue(FeedModel(posts = old))
-            }
-        }
-
+//    fun removeById(id: Long) {
 //        thread {
 //            val old = _state.value?.posts.orEmpty()
 //            _state.postValue(
@@ -140,21 +162,25 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 //            try {
 //                repository.removeById(id)
 //            } catch (e: IOException) {
-//                _state.postValue(_state.value?.copy(posts = old))
+//                _state.postValue(
+//                    _state.value?.copy(posts = old)
+//                )
 //            }
 //        }
-    }
+//    }
+//
+//    fun likeById(id: Long) {
+//        thread {
+//            val postLiked = repository.likeById(id)
+//            _state.postValue(
+//                _state.value?.copy(posts = _state.value?.posts.orEmpty()
+//                    .map { if (it.id == id) postLiked else it })
+//            )
+//
+//        }
+//    }
 
-    fun likeById(id: Long) {
-        thread {
-            val postLiked = repository.likeById(id)
-            _state.postValue(FeedModel(posts = _state.value?.posts.orEmpty()
-                .map{ if (it.id == id) postLiked else it }))
-
-        }
-    }
-
-fun share(id: Long) = repository.share(id)
+    fun share(id: Long) = repository.share(id)
 
 //    private fun isVideoExists(content: String) {
 //        if (content.lowercase().contains("https://www.youtu") ||

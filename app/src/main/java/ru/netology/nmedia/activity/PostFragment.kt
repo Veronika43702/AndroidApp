@@ -49,12 +49,12 @@ class PostFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
-                viewModel.removeById(post.id)
+                viewModel.removeByIdAsync(post.id)
                 findNavController().navigateUp()
             }
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                viewModel.likeByPostAsync(post)
             }
 
             override fun onShare(post: Post) {
