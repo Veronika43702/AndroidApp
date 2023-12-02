@@ -39,7 +39,7 @@ class NewPostFragment : Fragment() {
 
         binding.save.setOnClickListener {
             viewModel.configureNewPost(binding.content.text.toString())
-            viewModel.savePost()
+            viewModel.savePostAsync()
             viewModel.clearDraft()
             AndroidUtils.hideKeyboard(requireView())
             findNavController().navigateUp()
