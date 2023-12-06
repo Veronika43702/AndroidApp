@@ -12,6 +12,7 @@ import ru.netology.nmedia.databinding.CardPostsBinding
 import ru.netology.nmedia.dto.Number
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.PublishedDateTime
+import ru.netology.nmedia.handler.load
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -43,6 +44,7 @@ class PostViewHolder(
     private val onInteractionListener: OnInteractionListener
 
 ) : RecyclerView.ViewHolder(binding.root) {
+    val url = "http://10.0.2.2:9999//avatars/"
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
@@ -52,6 +54,7 @@ class PostViewHolder(
             share.text = Number.setNumberView(post.share)
             viewsCount.text = Number.setNumberView(post.views)
             like.isChecked = post.likedByMe
+            avatar.load("${url}${post.authorAvatar}")
 
 //            if (post.video.isNotEmpty()) {
 //                binding.videoLayout.visibility = View.VISIBLE

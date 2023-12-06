@@ -9,25 +9,25 @@ data class PostEntity constructor(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val author: String,
+    val authorAvatar: String,
     val content: String,
     val published: String,
     val likedByMe: Boolean,
     val likes: Int,
     val share: Int,
     val views: Int,
-    val authorAvatar: String? = null,
     //val video: String,
 ){
     fun toDto(): Post  = Post(
         id = id,
         author = author,
+        authorAvatar = authorAvatar,
         published = published,
         content = content,
         likedByMe = likedByMe,
         likes = likes,
         share = share,
         views = views,
-        authorAvatar = authorAvatar,
         //video = video
     )
 
@@ -36,13 +36,13 @@ data class PostEntity constructor(
             PostEntity(
                 id = id,
                 author = author,
+                authorAvatar = authorAvatar,
                 published = published,
                 content = content,
                 likedByMe = likedByMe,
                 likes = likes,
                 share = share,
                 views = views,
-                authorAvatar = authorAvatar
                 //video = video
             )
         }
