@@ -11,7 +11,7 @@
         android:id="@+id/avatar"
         android:layout_width="@dimen/posts_avatar_size"
         android:layout_height="@dimen/posts_avatar_size"
-        android:layout_marginBottom="@dimen/common_spacing"
+        android:layout_marginBottom="@dimen/min_spacing"
         android:contentDescription="@string/description_post_author_avatar"
         app:layout_constraintBottom_toBottomOf="@id/header"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,8 +68,8 @@
         android:layout_height="wrap_content"
         android:autoLink="web"
         android:lineSpacingMultiplier="1.5"
-        android:paddingTop="@dimen/common_spacing"
-        android:paddingBottom="@dimen/common_spacing"
+        android:paddingTop="@dimen/min_spacing"
+        android:paddingBottom="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
@@ -80,7 +80,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="videoLayout" />
+        app:constraint_referenced_ids="videoLayout, attachmentImage" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/footer"
+        android:layout_marginTop="8dp"
+        android:background="#c0c0c0"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/like"
@@ -122,14 +131,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/footer" />
 
+    <ImageView
+        android:id="@+id/attachmentImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/min_spacing"
+        android:adjustViewBounds="true"
+        app:layout_constraintBottom_toTopOf="@id/videoLayout"
+        app:layout_constraintTop_toBottomOf="@id/content" />
+
     <FrameLayout
         android:id="@+id/videoLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/min_spacing"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/footer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content">
+        app:layout_constraintTop_toBottomOf="@+id/attachmentImage">
+
 
     <ImageView
         android:id="@+id/video"
@@ -137,9 +158,9 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/youtube"
+        android:src="@drawable/youtube"
         app:layout_constraintBottom_toBottomOf="@id/footer"
-        app:layout_constraintTop_toBottomOf="@id/content" />
+        app:layout_constraintTop_toBottomOf="@id/attachmentImage" />
 
 
     <com.google.android.material.button.MaterialButton
