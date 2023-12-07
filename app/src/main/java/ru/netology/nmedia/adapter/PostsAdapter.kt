@@ -62,9 +62,12 @@ class PostViewHolder(
                     AttachmentType.IMAGE -> {
                         attachmentImage.visibility = View.VISIBLE
                         line.visibility = View.VISIBLE
-                        attachmentImage.loadAttachment("$BASE_URL/images/${post.attachment!!.url}")
+                        attachmentImage.loadAttachment("${BASE_URL}images/${post.attachment!!.url}")
                         attachmentImage.contentDescription = post.attachment!!.description
                     }}
+            } else {
+                attachmentImage.visibility = View.GONE
+                line.visibility = View.GONE
             }
 
 //            if (post.video.isNotEmpty()) {
