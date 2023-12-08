@@ -9,9 +9,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostsBinding
+import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Number
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.dto.PublishedDateTime
+import ru.netology.nmedia.handler.loadAttachment
+import ru.netology.nmedia.handler.loadAvatars
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -43,6 +45,7 @@ class PostViewHolder(
     private val onInteractionListener: OnInteractionListener
 
 ) : RecyclerView.ViewHolder(binding.root) {
+    val BASE_URL = "http://10.0.2.2:9999//"
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
@@ -52,6 +55,20 @@ class PostViewHolder(
             share.text = Number.setNumberView(post.share)
             viewsCount.text = Number.setNumberView(post.views)
             like.isChecked = post.likedByMe
+            avatar.loadAvatars("${BASE_URL}avatars/${post.authorAvatar}")
+
+            if (post.attachment != null){
+                when (post.attachment!!.type){
+                    AttachmentType.IMAGE -> {
+                        attachmentImage.visibility = View.VISIBLE
+                        line.visibility = View.VISIBLE
+                        attachmentImage.loadAttachment("${BASE_URL}images/${post.attachment!!.url}")
+                        attachmentImage.contentDescription = post.attachment!!.description
+                    }}
+            } else {
+                attachmentImage.visibility = View.GONE
+                line.visibility = View.GONE
+            }
 
 //            if (post.video.isNotEmpty()) {
 //                binding.videoLayout.visibility = View.VISIBLE
