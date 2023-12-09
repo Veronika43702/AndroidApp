@@ -5,10 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
@@ -42,11 +45,19 @@ class NewPostFragment : Fragment() {
             viewModel.savePostAsync()
             viewModel.clearDraft()
             AndroidUtils.hideKeyboard(requireView())
-            findNavController().navigateUp()
         }
-        viewModel.postCreated.observe(viewLifecycleOwner) {
-            viewModel.loadPosts()
-            findNavController().navigateUp()
+
+//        viewModel.data.observe(viewLifecycleOwner) { state ->
+//           if (state.error) {
+//               Snackbar.make(binding.root, "Не удалось сохранить пост", Snackbar.LENGTH_LONG)
+//                   .setAction("Ok"){}
+//                   .show()
+//           }
+//        }
+
+        viewModel.postCreated.observe(viewLifecycleOwner) {state ->
+                viewModel.loadPosts()
+                findNavController().navigateUp()
         }
 
         // отмена сохранения поста с сохранением черновика через системную кнопку "назад"
