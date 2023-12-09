@@ -42,7 +42,7 @@ class PostRepositoryImpl : PostRepository {
             })
     }
 
-    override fun removeById(id: Long, callback: PostRepository.Callback<Long>) {
+    override fun removeById(id: Long, callback: PostRepository.CallbackWithNoBody) {
         PostApiService.service.deletePostById(id)
             .enqueue(object : Callback<Unit> {
                 override fun onFailure(call: Call<Unit>, t: Throwable) {
@@ -54,12 +54,7 @@ class PostRepositoryImpl : PostRepository {
                         callback.onError(Exception(response.errorBody()?.string()))
                         return
                     }
-
-                    try {
-                        callback.onSuccess(id)
-                    } catch (e: Exception) {
-                        callback.onError(e)
-                    }
+                    callback.onSuccess()
                 }
             })
     }

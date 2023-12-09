@@ -97,12 +97,12 @@ class FeedFragment : Fragment() {
             binding.emptyText.isVisible = state.empty
             if (state.errorOfSave) {
                 Snackbar.make(binding.root, "Не удалось сохранить пост", Snackbar.LENGTH_LONG)
-                    .setAction("Ok"){}
+                    .setAnchorView(binding.newPostButton)
                     .show()
             }
             if (state.errorOfDelete) {
                 Snackbar.make(binding.root, "Не удалось удалить пост", Snackbar.LENGTH_LONG)
-                    .setAction("Ok"){}
+                    .setAnchorView(binding.newPostButton)
                     .show()
             }
         }
