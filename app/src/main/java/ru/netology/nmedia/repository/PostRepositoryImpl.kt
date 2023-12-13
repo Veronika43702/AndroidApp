@@ -32,8 +32,8 @@ class PostRepositoryImpl : PostRepository {
                        return
                    }
 
-                    val body = response.body() ?: throw RuntimeException("body is null")
                     try {
+                        val body = response.body() ?: throw RuntimeException("body is null")
                         callback.onSuccess(body)
                     } catch (e: Exception) {
                         callback.onError(e)
@@ -42,7 +42,7 @@ class PostRepositoryImpl : PostRepository {
             })
     }
 
-    override fun removeById(id: Long, callback: PostRepository.CallbackWithNoBody) {
+    override fun removeById(id: Long, callback: PostRepository.Callback<Unit>) {
         PostApiService.service.deletePostById(id)
             .enqueue(object : Callback<Unit> {
                 override fun onFailure(call: Call<Unit>, t: Throwable) {
@@ -54,7 +54,7 @@ class PostRepositoryImpl : PostRepository {
                         callback.onError(Exception(response.errorBody()?.string()))
                         return
                     }
-                    callback.onSuccess()
+                    callback.onSuccess(Unit)
                 }
             })
     }
@@ -72,8 +72,8 @@ class PostRepositoryImpl : PostRepository {
                         return
                     }
 
-                    val body = response.body() ?: throw RuntimeException("body is null")
                     try {
+                        val body = response.body() ?: throw RuntimeException("body is null")
                         callback.onSuccess(body)
                     } catch (e: Exception) {
                         callback.onError(e)
@@ -96,8 +96,8 @@ class PostRepositoryImpl : PostRepository {
                             return
                         }
 
-                        val body = response.body() ?: throw RuntimeException("body is null")
                         try {
+                            val body = response.body() ?: throw RuntimeException("body is null")
                             callback.onSuccess(body)
                         } catch (e: Exception) {
                             callback.onError(e)
@@ -117,8 +117,9 @@ class PostRepositoryImpl : PostRepository {
                             return
                         }
 
-                        val body = response.body() ?: throw RuntimeException("body is null")
+
                         try {
+                            val body = response.body() ?: throw RuntimeException("body is null")
                             callback.onSuccess(body)
                         } catch (e: Exception) {
                             callback.onError(e)
