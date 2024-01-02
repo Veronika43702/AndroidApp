@@ -42,21 +42,12 @@ class NewPostFragment : Fragment() {
 
         binding.save.setOnClickListener {
             viewModel.configureNewPost(binding.content.text.toString())
-            viewModel.savePostAsync()
+            viewModel.save()
             viewModel.clearDraft()
             AndroidUtils.hideKeyboard(requireView())
         }
 
-//        viewModel.data.observe(viewLifecycleOwner) { state ->
-//           if (state.error) {
-//               Snackbar.make(binding.root, "Не удалось сохранить пост", Snackbar.LENGTH_LONG)
-//                   .setAction("Ok"){}
-//                   .show()
-//           }
-//        }
-
-        viewModel.postCreated.observe(viewLifecycleOwner) {state ->
-                viewModel.loadPosts()
+        viewModel.postCreated.observe(viewLifecycleOwner) {
                 findNavController().navigateUp()
         }
 
