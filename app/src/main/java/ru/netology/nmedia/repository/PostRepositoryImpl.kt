@@ -72,7 +72,6 @@ class PostRepositoryImpl(
             }
 
             if (!response.isSuccessful) {
-                postDao.likeById(post.id)
                 throw ApiError(response.code(), response.message())
             }
         } catch (e: IOException) {
