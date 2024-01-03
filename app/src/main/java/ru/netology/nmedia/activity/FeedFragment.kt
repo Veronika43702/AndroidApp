@@ -44,12 +44,10 @@ class FeedFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
-                viewModel.removeByIdDB(post.id)
                 viewModel.removeById(post.id)
             }
 
             override fun onLike(post: Post) {
-                viewModel.likeByIdDB(post)
                 viewModel.likeById(post)
             }
 
@@ -98,7 +96,7 @@ class FeedFragment : Fragment() {
             binding.progress.isVisible = state.loading
             binding.swiperefresh.isRefreshing = state.refreshing
             if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
                     .setAction(R.string.retry_loading) {
                         viewModel.refresh()
                     }

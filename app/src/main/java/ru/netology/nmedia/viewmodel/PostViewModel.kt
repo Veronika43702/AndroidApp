@@ -100,12 +100,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun removeByIdDB(id: Long) {
-        viewModelScope.launch {
-            repository.removeByIdDB(id)
-        }
-    }
-
     fun likeById(post: Post) {
         viewModelScope.launch {
             try {
@@ -118,12 +112,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _state.value = FeedModelState(errorOfLike = true, post = post)
 
             }
-        }
-    }
-
-    fun likeByIdDB(post: Post) {
-        viewModelScope.launch {
-            repository.likeByIdDB(post)
         }
     }
 

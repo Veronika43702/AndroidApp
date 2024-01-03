@@ -49,12 +49,11 @@ class PostRepositoryImpl(
 
     override suspend fun removeById(id: Long) {
         try {
+            postDao.removeById(id)
             val response = PostsApi.retrofitService.removeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-
-            //postDao.removeById(id)
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -62,13 +61,9 @@ class PostRepositoryImpl(
         }
     }
 
-    override suspend fun removeByIdDB(id: Long) {
-        postDao.removeById(id)
-    }
-
     override suspend fun likeById(post: Post) {
         val response: Response<Post>
-        //postDao.likeById(post.id)
+        postDao.likeById(post.id)
         try {
             if (!post.likedByMe) {
                 response = PostsApi.retrofitService.likeById(post.id)
@@ -77,19 +72,17 @@ class PostRepositoryImpl(
             }
 
             if (!response.isSuccessful) {
+                postDao.likeById(post.id)
                 throw ApiError(response.code(), response.message())
             }
         } catch (e: IOException) {
+            postDao.likeById(post.id)
             throw NetworkError
         } catch (e: Exception) {
+            postDao.likeById(post.id)
             throw UnknownError
         }
     }
-
-    override suspend fun likeByIdDB(post: Post) {
-        postDao.likeById(post.id)
-    }
-
 
 //
 //    override fun likeById(post: Post, callback: PostRepository.Callback<Post>) {
