@@ -10,20 +10,23 @@ import ru.netology.nmedia.entity.PostEntity
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
+    @Query("SELECT * FROM PostEntity ORDER BY case when id <= 0 then -id end DESC, id DESC")
     fun getAll(): LiveData<List<PostEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
+
+    @Query("SELECT * FROM PostEntity where id <= 0 ORDER BY -id")
+    fun getUnsavedPosts(): List<PostEntity>
+
+    @Query("DELETE FROM PostEntity WHERE id <= 0")
+    suspend fun deleteUnsaved()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(posts: List<PostEntity>)
 
     @Query("UPDATE PostEntity SET content = :content WHERE id = :id")
     suspend fun updateContentById(id: Long, content: String)
-
-    suspend fun save(post: PostEntity) =
-        if (post.id == 0L) insert(post) else updateContentById(post.id, post.content)
 
     @Query("""UPDATE PostEntity SET
                likes = likes + CASE WHEN likedByMe THEN -1 ELSE 1 END,

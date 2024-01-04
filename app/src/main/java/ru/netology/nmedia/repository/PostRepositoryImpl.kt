@@ -15,15 +15,25 @@ import ru.netology.nmedia.error.UnknownError
 class PostRepositoryImpl(
     private val postDao: PostDao
 ) : PostRepository {
-    override val data: LiveData<List<Post>> = postDao.getAll().map {
-        it.map { post ->
-            post.toDto()
+    override val data: LiveData<List<Post>> =
+        postDao.getAll().map {
+            it.map { post ->
+                post.toDto()
+            }
         }
+
+    override suspend fun getUnsavedPosts(): List<Post> = postDao.getUnsavedPosts().map {
+        it.toDto()
+    }
+
+    override suspend fun deleteUnsavedPosts() {
+        postDao.deleteUnsaved()
     }
 
     override suspend fun getAll() {
         val posts: List<Post> = PostsApi.retrofitService.getAll()
 
+        postDao.deleteUnsaved()
         postDao.insert(
             posts.map {
                 PostEntity.fromDto(it)
@@ -33,12 +43,15 @@ class PostRepositoryImpl(
 
     override suspend fun save(post: Post) {
         try {
-            val response = PostsApi.retrofitService.save(post)
+            postDao.insert(PostEntity.fromDto(post).copy(isSaved = false))
+            val postForRequest = post.copy(id = 0L)
+            val response = PostsApi.retrofitService.save(postForRequest)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
+            postDao.removeById(post.id)
             postDao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
@@ -82,52 +95,4 @@ class PostRepositoryImpl(
             throw UnknownError
         }
     }
-
-//
-//    override fun likeById(post: Post, callback: PostRepository.Callback<Post>) {
-//        if (!post.likedByMe) {
-//            PostApiService.service.like(post.id)
-//                .enqueue(object : Callback<Post> {
-//                    override fun onFailure(call: Call<Post>, t: Throwable) {
-//                        callback.onError(Exception(t))
-//                    }
-//
-//                    override fun onResponse(call: Call<Post>, response: Response<Post>) {
-//                        if (!response.isSuccessful){
-//                            callback.onError(Exception(response.errorBody()?.string()))
-//                            return
-//                        }
-//
-//                        try {
-//                            val body = response.body() ?: throw RuntimeException("body is null")
-//                            callback.onSuccess(body)
-//                        } catch (e: Exception) {
-//                            callback.onError(e)
-//                        }
-//                    }
-//                })
-//        } else {
-//            PostApiService.service.unlike(post.id)
-//                .enqueue(object : Callback<Post> {
-//                    override fun onFailure(call: Call<Post>, t: Throwable) {
-//                        callback.onError(Exception(t))
-//                    }
-//
-//                    override fun onResponse(call: Call<Post>, response: Response<Post>) {
-//                        if (!response.isSuccessful){
-//                            callback.onError(Exception(response.errorBody()?.string()))
-//                            return
-//                        }
-//
-//
-//                        try {
-//                            val body = response.body() ?: throw RuntimeException("body is null")
-//                            callback.onSuccess(body)
-//                        } catch (e: Exception) {
-//                            callback.onError(e)
-//                        }
-//                    }
-//                })
-//        }
-//    }
 }

@@ -63,16 +63,6 @@ class FeedFragment : Fragment() {
                 //viewModel.share(post.id)
             }
 
-            // открытие ссылки в youtube по клику на кнопку и поле картинки
-//            override fun openVideo(post: Post) {
-//                val webpage: Uri = Uri.parse(post.video)
-//                val intent = Intent(Intent.ACTION_VIEW, webpage)
-//                try {
-//                    startActivity(intent)
-//                } catch (e: ActivityNotFoundException) {
-//                    Toast.makeText(context, "No suitable app found!", Toast.LENGTH_SHORT).show()
-//                }
-//            }
 
             // переход на фрагмент поста по клику на пост (кроме работающих кнопок) с передачей id поста через ключ idArg
             override fun onRoot(post: Post) {
@@ -95,6 +85,7 @@ class FeedFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
             binding.swiperefresh.isRefreshing = state.refreshing
+
             if (state.error) {
                 Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
                     .setAction(R.string.retry_loading) {
@@ -105,7 +96,7 @@ class FeedFragment : Fragment() {
             if (state.errorOfSave) {
                 Snackbar.make(binding.root, R.string.error_save, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.retry_loading) {
-                        viewModel.save()
+                        viewModel.loadUnsavedPosts()
                     }
                     .show()
             }

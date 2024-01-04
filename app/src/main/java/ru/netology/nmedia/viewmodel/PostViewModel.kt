@@ -14,15 +14,17 @@ import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
+import java.time.OffsetDateTime
 
 private val empty = Post(
-    id = 0,
     content = "",
-    author = "",
-    published = "",
+    author = "Student",
+    published = OffsetDateTime.now().toEpochSecond(),
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
+    var id = 0L
+
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(application).postDao())
 
@@ -42,7 +44,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         get() = _postCreated
 
     init {
+        deleteUnsavedPosts()
         loadPosts()
+    }
+
+    fun deleteUnsavedPosts(){
+        viewModelScope.launch {
+            repository.deleteUnsavedPosts()
+        }
     }
 
 
@@ -70,6 +79,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun loadUnsavedPosts(){
+        viewModelScope.launch {
+            repository.getUnsavedPosts().map {
+                 try {
+                     repository.save(it)
+                    _state.value = FeedModelState()
+                } catch (e: Exception) {
+                    _state.value = FeedModelState(errorOfSave = true, post = it)
+                }
+            }
+        }
+    }
 
     fun save() {
         edited.value?.let {
@@ -79,7 +100,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     repository.save(it)
                     _state.value = FeedModelState()
                 } catch (e: Exception) {
-                    _state.value = FeedModelState(errorOfSave = true)
+                    _state.value = FeedModelState(errorOfSave = true, post = it)
                 }
             }
         }
@@ -90,9 +111,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 repository.removeById(id)
-                data.value?.copy(posts = data.value?.posts
-                    .orEmpty()
-                    .filter { it.id != id })
                 _state.value = FeedModelState()
             } catch (e: Exception){
                 _state.value = FeedModelState(errorOfDelete = true, id = id)
@@ -104,9 +122,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 repository.likeById(post)
-                data.value?.copy(posts = data.value?.posts
-                    .orEmpty()
-                    .map { if (it.id == post.id) post else it })
                 _state.value = FeedModelState()
             } catch (e: Exception){
                 _state.value = FeedModelState(errorOfLike = true, post = post)
@@ -125,7 +140,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         // наполнение данными нового поста
-        edited.value = edited.value?.copy(content = text)
+        edited.value = edited.value?.copy(id = id, content = text)
+        id--
     }
 
     // функция редактирования (edited = редактируемый пост)
