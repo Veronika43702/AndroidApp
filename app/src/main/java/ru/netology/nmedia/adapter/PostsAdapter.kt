@@ -21,8 +21,6 @@ interface OnInteractionListener {
     fun onRemove(post: Post) {}
     fun onShare(post: Post) {}
     fun onRoot(post: Post) {}
-
-    fun openVideo(post: Post) {}
 }
 
 class PostsAdapter(
@@ -71,6 +69,10 @@ class PostViewHolder(
             }
 
             if (post.id > 0) {
+                like.isClickable = true
+                share.isClickable = true
+                waitLoad.visibility = View.GONE
+
                 like.setOnClickListener {
                     onInteractionListener.onLike(post)
                 }
@@ -86,12 +88,12 @@ class PostViewHolder(
                 content.setOnClickListener {
                     onInteractionListener.onRoot(post)
                 }
-
-                waitLoad.visibility = View.GONE
             } else {
+                like.isClickable = false
+                share.isClickable = false
                 waitLoad.visibility = View.VISIBLE
-            }
 
+            }
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)

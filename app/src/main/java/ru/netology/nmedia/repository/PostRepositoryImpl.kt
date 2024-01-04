@@ -43,7 +43,7 @@ class PostRepositoryImpl(
 
     override suspend fun save(post: Post) {
         try {
-            postDao.insert(PostEntity.fromDto(post).copy(isSaved = false))
+            postDao.insert(PostEntity.fromDto(post))
             val postForRequest = post.copy(id = 0L)
             val response = PostsApi.retrofitService.save(postForRequest)
             if (!response.isSuccessful) {

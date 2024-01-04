@@ -16,7 +16,6 @@ data class PostEntity constructor(
     val likes: Int,
     val share: Int,
     val views: Int,
-    val isSaved: Boolean
     //val video: String,
 ){
     fun toDto(): Post  = Post(
@@ -44,7 +43,6 @@ data class PostEntity constructor(
                 likes = likes,
                 share = share,
                 views = views,
-                isSaved = true
                 //video = video
             )
         }

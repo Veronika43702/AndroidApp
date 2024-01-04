@@ -9,6 +9,7 @@ interface PostRepository {
     suspend fun save(post: Post)
     suspend fun removeById(id: Long)
     suspend fun likeById(post: Post)
+
     suspend fun getUnsavedPosts(): List<Post>
     suspend fun deleteUnsavedPosts()
 }

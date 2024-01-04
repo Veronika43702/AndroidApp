@@ -86,7 +86,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                      repository.save(it)
                     _state.value = FeedModelState()
                 } catch (e: Exception) {
-                    _state.value = FeedModelState(errorOfSave = true, post = it)
+                    _state.value = FeedModelState(errorOfSave = true)
                 }
             }
         }
@@ -100,7 +100,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     repository.save(it)
                     _state.value = FeedModelState()
                 } catch (e: Exception) {
-                    _state.value = FeedModelState(errorOfSave = true, post = it)
+                    _state.value = FeedModelState(errorOfSave = true)
                 }
             }
         }
