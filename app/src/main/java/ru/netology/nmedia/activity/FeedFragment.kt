@@ -117,6 +117,7 @@ class FeedFragment : Fragment() {
         }
 
         binding.swiperefresh.setOnRefreshListener {
+            viewModel.loadUnsavedPosts()
             viewModel.refresh()
         }
 

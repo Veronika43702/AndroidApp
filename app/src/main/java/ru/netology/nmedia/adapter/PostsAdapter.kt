@@ -12,6 +12,7 @@ import ru.netology.nmedia.databinding.CardPostsBinding
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Number
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.PublishedDateTime
 import ru.netology.nmedia.handler.loadAttachment
 import ru.netology.nmedia.handler.loadAvatars
 
@@ -47,7 +48,7 @@ class PostViewHolder(
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
-            published.text = post.published.toString() //PublishedDateTime.getTime(post.published)
+            published.text = PublishedDateTime.getTime(post.published)
             content.text = post.content
             like.text = Number.setNumberView(post.likes)
             share.text = Number.setNumberView(post.share)

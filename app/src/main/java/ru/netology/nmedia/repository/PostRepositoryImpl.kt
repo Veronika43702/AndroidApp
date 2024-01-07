@@ -43,15 +43,26 @@ class PostRepositoryImpl(
 
     override suspend fun save(post: Post) {
         try {
-            postDao.insert(PostEntity.fromDto(post))
-            val postForRequest = post.copy(id = 0L)
-            val response = PostsApi.retrofitService.save(postForRequest)
+            // если у поста id=0, то сохраняется новый пост с id на 1 меньше минимального отрицательного
+            // если у поста id > 0, то сохраняется редактируемый пост
+            val id = if (post.id == 0L) {
+                if (postDao.findMinId() <= 0) {
+                    postDao.findMinId() - 1
+                } else -1
+            } else post.id
+
+            postDao.insert(PostEntity.fromDto(post.copy(id = id)))
+
+            val response = PostsApi.retrofitService.save(post.copy(id = 0L))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.removeById(post.id)
+
+            // удаляем из местной базы пост с отрицательным id (несохраненный до ответа от сервера)
+            postDao.removeById(id)
+            // сохраняем пост, полученный от сервера
             postDao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
@@ -92,6 +103,23 @@ class PostRepositoryImpl(
             throw NetworkError
         } catch (e: Exception) {
             postDao.likeById(post.id)
+            throw UnknownError
+        }
+    }
+
+    override suspend fun saveEditedPost(post: Post) {
+        try {
+            postDao.insert(PostEntity.fromDto(post))
+            val response = PostsApi.retrofitService.save(post)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            postDao.insert(PostEntity.fromDto(body))
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
             throw UnknownError
         }
     }

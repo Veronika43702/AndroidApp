@@ -37,5 +37,5 @@
     <string name="error_loading">Что-то пошло не так. Попробуйте позднее</string>
     <string name="error_save">Невозможно сохранить пост. Попробуйте позднее</string>
     <string name="error_delete">Невозможно удалить пост. Попробуйте позднее</string>
-    <string name="error_likes">Невозможно лайкнуть/дислайкнуть пост. Попробуйте позднее</string>
+    <string name="error_likes">Невозможно поставить/снять лайк. Попробуйте позднее</string>
 </resources>

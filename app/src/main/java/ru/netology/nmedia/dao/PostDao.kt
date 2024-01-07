@@ -19,6 +19,9 @@ interface PostDao {
     @Query("SELECT * FROM PostEntity where id <= 0 ORDER BY -id")
     fun getUnsavedPosts(): List<PostEntity>
 
+    @Query("SELECT MIN(id) from PostEntity")
+    suspend fun findMinId(): Long
+
     @Query("DELETE FROM PostEntity WHERE id <= 0")
     suspend fun deleteUnsaved()
 
