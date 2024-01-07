@@ -1,50 +1,55 @@
 package ru.netology.nmedia.dto
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
+import java.text.SimpleDateFormat
+import java.time.OffsetDateTime
 
 class PublishedDateTime {
     companion object {
-        fun getTime(publishedDate: String): String {
-            var edited = ""
-            if (publishedDate.length > 23) {
-                edited = publishedDate.substring(23,)
-            }
-            val newStr = publishedDate.replace("T", " ").substring(0, 19)
-            val formatterFromString = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            val dt = LocalDateTime.parse(newStr, formatterFromString)
+        fun getTime(publishedSeconds: Long): String {
+            val timeNowSeconds = OffsetDateTime.now().toEpochSecond()
 
-            val localDateTime = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern("dd MMM в HH:mm")
-            val formatterDate = DateTimeFormatter.ofPattern("yy dd MM")
-            val formatterTime = DateTimeFormatter.ofPattern("HH:mm")
+            val fullDateTime =
+                SimpleDateFormat("dd MMM yy в HH:mm").format(publishedSeconds * 1000L)
+            val dateTime = SimpleDateFormat("dd MMM в HH:mm").format(publishedSeconds * 1000L)
+            val formatYear = SimpleDateFormat("yy")
+            val formatDay = SimpleDateFormat("dd")
+            val time = SimpleDateFormat("HH:mm").format(publishedSeconds * 1000L)
 
-            val minutesFromLocal = (localDateTime.hour * 60 + localDateTime.minute) - (dt.hour * 60 + dt.minute)
-            val dateAndTime = when (ChronoUnit.MINUTES.between(dt, localDateTime)) {
-                in 0..59 -> minutesFromLocal.toString() + getMinuteWord(minutesFromLocal) + " назад"
-                in 60..119 -> "час назад"
-                in 120..179 -> "два часа назад"
-                in 180..239 -> "три часа назад"
-                else -> {
-                    if (localDateTime.format(formatterDate) == dt.format(formatterDate)) {
-                        "сегодня в " + dt.format(formatterTime)
-                    } else if (localDateTime.year == dt.year && localDateTime.dayOfYear == dt.dayOfYear + 1) {
-                        "вчера в " + dt.format(formatterTime)
-                    } else dt.format(formatter)
+            val publishedDay = formatDay.format(publishedSeconds * 1000L)
+            val publishedYear = formatYear.format(publishedSeconds * 1000L)
+            val timeNowDay = formatDay.format(timeNowSeconds * 1000L)
+            val timeNowYear = formatYear.format(timeNowSeconds * 1000L)
+
+            val minutesFromNow = ((timeNowSeconds - publishedSeconds) / 60).toInt()
+
+            return when (timeNowDay.toInt() - publishedDay.toInt()) {
+                0 -> when (minutesFromNow) {
+                    in 0..59 -> minutesFromNow.toString() + getMinuteWord(minutesFromNow)
+                    in 60..119 -> "час назад"
+                    in 120..179 -> "два часа назад"
+                    in 180..239 -> "три часа назад"
+                    else -> "сегодня в $time"
                 }
+
+                1 -> if (timeNowYear == publishedYear) {
+                    "вчера в $time"
+                } else fullDateTime
+
+                else -> if (timeNowYear == publishedYear) {
+                    dateTime
+                } else fullDateTime
             }
-            return dateAndTime + edited
         }
 
 
         fun getMinuteWord(minutes: Int): String {
-            return when (minutes % 10) {
+            return if (minutes % 100 in 11..19) {
+                " минут"
+            } else when (minutes % 10) {
                 1 -> " минуту"
                 2, 3, 4 -> " минуты"
                 else -> " минут"
-            }
-
+            } + " назад"
         }
     }
 }

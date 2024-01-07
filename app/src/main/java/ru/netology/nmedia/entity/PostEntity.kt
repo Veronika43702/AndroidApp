@@ -6,12 +6,12 @@ import ru.netology.nmedia.dto.Post
 
 @Entity
 data class PostEntity constructor(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Long,
     val author: String,
     val authorAvatar: String,
     val content: String,
-    val published: String,
+    val published: Long,
     val likedByMe: Boolean,
     val likes: Int,
     val share: Int,

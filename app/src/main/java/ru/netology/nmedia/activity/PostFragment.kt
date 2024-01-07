@@ -1,13 +1,10 @@
 package ru.netology.nmedia.activity
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -49,12 +46,12 @@ class PostFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
-                viewModel.removeByIdAsync(post.id)
+                viewModel.removeById(post.id)
                 findNavController().navigateUp()
             }
 
             override fun onLike(post: Post) {
-                viewModel.likeByPostAsync(post)
+                viewModel.likeById(post)
             }
 
             override fun onShare(post: Post) {
@@ -66,7 +63,7 @@ class PostFragment : Fragment() {
 
                 val shareIntent = Intent.createChooser(intent, null)
                 startActivity(shareIntent)
-                viewModel.share(post.id)
+                //viewModel.share(post.id)
             }
 
             // открытие ссылки в youtube по клику на кнопку и поле картинки

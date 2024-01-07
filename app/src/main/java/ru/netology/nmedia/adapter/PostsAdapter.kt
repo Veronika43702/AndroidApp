@@ -12,6 +12,7 @@ import ru.netology.nmedia.databinding.CardPostsBinding
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Number
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.PublishedDateTime
 import ru.netology.nmedia.handler.loadAttachment
 import ru.netology.nmedia.handler.loadAvatars
 
@@ -21,8 +22,6 @@ interface OnInteractionListener {
     fun onRemove(post: Post) {}
     fun onShare(post: Post) {}
     fun onRoot(post: Post) {}
-
-    fun openVideo(post: Post) {}
 }
 
 class PostsAdapter(
@@ -49,7 +48,7 @@ class PostViewHolder(
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
-            published.text = post.published //PublishedDateTime.getTime(post.published)
+            published.text = PublishedDateTime.getTime(post.published)
             content.text = post.content
             like.text = Number.setNumberView(post.likes)
             share.text = Number.setNumberView(post.share)
@@ -70,20 +69,32 @@ class PostViewHolder(
                 line.visibility = View.GONE
             }
 
-//            if (post.video.isNotEmpty()) {
-//                binding.videoLayout.visibility = View.VISIBLE
-//            }
+            if (post.id > 0) {
+                like.isClickable = true
+                share.isClickable = true
+                waitLoad.visibility = View.GONE
 
-            like.setOnClickListener {
-                onInteractionListener.onLike(post)
+                like.setOnClickListener {
+                    onInteractionListener.onLike(post)
+                }
+
+                share.setOnClickListener {
+                    onInteractionListener.onShare(post)
+                }
+
+                root.setOnClickListener {
+                    onInteractionListener.onRoot(post)
+                }
+
+                content.setOnClickListener {
+                    onInteractionListener.onRoot(post)
+                }
+            } else {
+                like.isClickable = false
+                share.isClickable = false
+                waitLoad.visibility = View.VISIBLE
+
             }
-
-            share.setOnClickListener {
-                onInteractionListener.onShare(post)
-            }
-
-
-
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -103,22 +114,6 @@ class PostViewHolder(
                         }
                     }
                 }.show()
-            }
-
-//            videoButton.setOnClickListener {
-//                onInteractionListener.openVideo(post)
-//            }
-
-//            video.setOnClickListener {
-//                onInteractionListener.openVideo(post)
-//            }
-
-            root.setOnClickListener {
-                onInteractionListener.onRoot(post)
-            }
-
-            content.setOnClickListener {
-                onInteractionListener.onRoot(post)
             }
         }
 
