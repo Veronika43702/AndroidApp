@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -78,7 +79,12 @@ class FeedFragment : Fragment() {
 
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
+            val newPost = state.posts.size > adapter.currentList.size && adapter.itemCount > 0
+            adapter.submitList(state.posts) {
+                if (newPost) {
+                    binding.list.smoothScrollToPosition(0)
+                }
+            }
             binding.emptyText.isVisible = state.empty
         }
 
@@ -115,6 +121,21 @@ class FeedFragment : Fragment() {
                     }
                     .show()
             }
+        }
+
+        viewModel.newerCount.observe(viewLifecycleOwner){count ->
+            println(count)
+            if (count > 0) {
+                binding.newPosts.setText(getString(R.string.new_posts) + " (" + count + ")")
+                binding.newPosts.isVisible = true
+            } else binding.newPosts.isGone = true
+        }
+
+
+        binding.newPosts.setOnClickListener{
+            viewModel.updateNewPost()
+            binding.list.smoothScrollToPosition(0)
+            binding.newPosts.isGone = true
         }
 
         binding.swiperefresh.setOnRefreshListener {
