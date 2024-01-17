@@ -79,12 +79,7 @@ class FeedFragment : Fragment() {
 
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
-            val newPost = state.posts.size > adapter.currentList.size && adapter.itemCount > 0
-            adapter.submitList(state.posts) {
-                if (newPost) {
-                    binding.list.smoothScrollToPosition(0)
-                }
-            }
+            adapter.submitList(state.posts)
             binding.emptyText.isVisible = state.empty
         }
 
@@ -124,7 +119,6 @@ class FeedFragment : Fragment() {
         }
 
         viewModel.newerCount.observe(viewLifecycleOwner){count ->
-            println(count)
             if (count > 0) {
                 binding.newPosts.setText(getString(R.string.new_posts) + " (" + count + ")")
                 binding.newPosts.isVisible = true
