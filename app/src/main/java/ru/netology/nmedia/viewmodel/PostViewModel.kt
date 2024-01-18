@@ -15,6 +15,7 @@ import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
+import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
@@ -43,6 +44,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             .catch { _state.postValue(FeedModelState(error = true))}
             .asLiveData(Dispatchers.Default, 100)
     }
+
+    private val _photo = MutableLiveData<PhotoModel?>(null)
+    val photo: LiveData<PhotoModel?>
+        get() = _photo
 
     val edited = MutableLiveData(empty)
     private var draft: String = ""
@@ -111,7 +116,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             _postCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    it?.let { post -> repository.save(post) }
+                    it?.let { post -> repository.saveWithAttachment(post, _photo.value) }
                     _state.value = FeedModelState()
                 } catch (e: Exception) {
                     _state.value = FeedModelState(errorOfSave = true)
@@ -119,6 +124,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         edited.value = empty
+    }
+
+    fun savePhoto(photoModel: PhotoModel){
+        _photo.value = photoModel
+    }
+
+    fun clearPhoto(){
+        _photo.value = null
     }
 
     fun removeById(id: Long) {

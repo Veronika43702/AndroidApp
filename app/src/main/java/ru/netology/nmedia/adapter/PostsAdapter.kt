@@ -1,13 +1,16 @@
 package ru.netology.nmedia.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
+import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.CardPostsBinding
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Number
@@ -22,6 +25,7 @@ interface OnInteractionListener {
     fun onRemove(post: Post) {}
     fun onShare(post: Post) {}
     fun onRoot(post: Post) {}
+    fun onPhoto(post: Post) {}
 }
 
 class PostsAdapter(
@@ -61,8 +65,7 @@ class PostViewHolder(
                     AttachmentType.IMAGE -> {
                         attachmentImage.visibility = View.VISIBLE
                         line.visibility = View.VISIBLE
-                        attachmentImage.loadAttachment("${BASE_URL}images/${post.attachment!!.url}")
-                        attachmentImage.contentDescription = post.attachment!!.description
+                        attachmentImage.loadAttachment("${BASE_URL}media/${post.attachment!!.url}")
                     }}
             } else {
                 attachmentImage.visibility = View.GONE
@@ -95,6 +98,12 @@ class PostViewHolder(
                 waitLoad.visibility = View.VISIBLE
 
             }
+
+            // переход на фрагмент фото по клику на фото поста
+            binding.attachmentImage.setOnClickListener {
+                onInteractionListener.onPhoto(post)
+            }
+
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)

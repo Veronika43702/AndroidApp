@@ -2,9 +2,15 @@ package ru.netology.nmedia.repository
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import okhttp3.MultipartBody
 import retrofit2.Response
 import ru.netology.nmedia.api.PostsApi
 import ru.netology.nmedia.dao.PostDao
+import okhttp3.RequestBody.Companion.asRequestBody
+import ru.netology.nmedia.dto.Attachment
+import ru.netology.nmedia.dto.AttachmentType
+import ru.netology.nmedia.dto.Media
+import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toDto
@@ -14,12 +20,14 @@ import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
 import java.io.IOException
 import ru.netology.nmedia.error.UnknownError
+import ru.netology.nmedia.model.PhotoModel
+import java.io.File
 
 class PostRepositoryImpl(
     private val postDao: PostDao
 ) : PostRepository {
     override val data = postDao.getAll()
-        .map (List<PostEntity>::toDto)
+        .map(List<PostEntity>::toDto)
 
     override suspend fun getUnsavedPosts(): List<Post> = postDao.getUnsavedPosts().map {
         it.toDto()
@@ -45,20 +53,20 @@ class PostRepositoryImpl(
     }
 
     override fun getNewerCount(): Flow<Int> = flow {
-            while (true) {
-                delay(10_000L)
-                val response = PostsApi.retrofitService.getNewer(postDao.findMaxId())
-                if (!response.isSuccessful) {
-                    throw ApiError(response.code(), response.message())
-                }
-
-                val body = response.body() ?: throw ApiError(response.code(), response.message())
-                postDao.insert(body.toEntity().map {it.copy(isNewPost = true) })
-                emit(postDao.count())
+        while (true) {
+            delay(10_000L)
+            val response = PostsApi.retrofitService.getNewer(postDao.findMaxId())
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
             }
+
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            postDao.insert(body.toEntity().map { it.copy(isNewPost = true) })
+            emit(postDao.count())
         }
-            .catch { e -> throw AppError.from(e) }
-          //  .flowOn(Dispatchers.Default)
+    }
+        .catch { e -> throw AppError.from(e) }
+    //  .flowOn(Dispatchers.Default)
 
     override suspend fun save(post: Post) {
         try {
@@ -88,6 +96,50 @@ class PostRepositoryImpl(
         } catch (e: Exception) {
             throw UnknownError
         }
+    }
+
+    override suspend fun saveWithAttachment(post: Post, photo: PhotoModel?) {
+        try {
+            // если у поста id=0, то сохраняется новый пост с id на 1 меньше минимального отрицательного
+            // если у поста id > 0, то сохраняется редактируемый пост
+            val id = if (post.id == 0L) {
+                if (postDao.findMinId() <= 0) {
+                    postDao.findMinId() - 1
+                } else -1
+            } else post.id
+
+            postDao.insert(PostEntity.fromDto(post.copy(id = id)))
+
+            val postWithAttachment = if (photo != null) {
+                val media = upload(photo.file)
+                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+            } else {
+                post
+            }
+            val response = PostsApi.retrofitService.save(postWithAttachment)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+
+            // удаляем из местной базы пост с отрицательным id (несохраненный до ответа от сервера)
+            postDao.removeById(id)
+            // сохраняем пост, полученный от сервера
+            postDao.insert(PostEntity.fromDto(body))
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    private suspend fun upload(file: File): Media {
+        val media = MultipartBody.Part.createFormData(
+            "file", file.name, file.asRequestBody()
+        )
+
+        return PostsApi.retrofitService.upload(media)
     }
 
     override suspend fun removeById(id: Long) {

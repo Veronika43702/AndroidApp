@@ -15,6 +15,7 @@ import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentPostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.LongArg
+import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 
@@ -84,16 +85,6 @@ class PostFragment : Fragment() {
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts.filter { it.id == id })
         }
-
-//        viewModel.data.observe(viewLifecycleOwner)
-//        { posts ->
-//            val listOfOnePost = posts //.filter { it.id == id }
-//            if (listOfOnePost.isEmpty()) {
-//                findNavController().navigateUp()
-//                return@observe
-//            }
-//            adapter.submitList(listOfOnePost)
-//        }
 
         return binding.root
     }

@@ -61,6 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/common_spacing"
         app:icon="@drawable/up_arrow"
+        android:text="@string/new_posts"
         android:contentDescription="@string/new_posts"
         android:layout_gravity="top|center" />
 

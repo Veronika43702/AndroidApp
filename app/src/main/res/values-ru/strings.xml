@@ -11,6 +11,11 @@
     <string name="description_post_save">Сохранить</string>
     <string name="description_post_edit">Редактировать</string>
     <string name="description_post_add">Добавить</string>
+    <string name="description_select_photo">Выбрать фото</string>
+    <string name="description_take_photo">Сделать фото</string>
+    <string name="description_photo">Фото</string>
+
+    <string name="save">Сохранить</string>
     <string name="description_post_edit_message">Редактировать сообщение</string>
 
     <string name="menu_edit">Изменить</string>
@@ -41,4 +46,5 @@
     <string name="error_save">Невозможно сохранить пост. Попробуйте позднее</string>
     <string name="error_delete">Невозможно удалить пост. Попробуйте позднее</string>
     <string name="error_likes">Невозможно поставить/снять лайк. Попробуйте позднее</string>
+    <string name="remove">Удалить</string>
 </resources>

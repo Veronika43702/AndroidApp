@@ -149,6 +149,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/min_spacing"
         android:adjustViewBounds="true"
+        android:clickable="true"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/videoLayout"
         app:layout_constraintTop_toBottomOf="@id/content" />
