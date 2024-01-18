@@ -1,13 +1,16 @@
 package ru.netology.nmedia.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import retrofit2.Response
 import ru.netology.nmedia.api.PostsApi
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
+import ru.netology.nmedia.entity.toDto
+import ru.netology.nmedia.entity.toEntity
 import ru.netology.nmedia.error.ApiError
+import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
 import java.io.IOException
 import ru.netology.nmedia.error.UnknownError
@@ -15,12 +18,8 @@ import ru.netology.nmedia.error.UnknownError
 class PostRepositoryImpl(
     private val postDao: PostDao
 ) : PostRepository {
-    override val data: LiveData<List<Post>> =
-        postDao.getAll().map {
-            it.map { post ->
-                post.toDto()
-            }
-        }
+    override val data = postDao.getAll()
+        .map (List<PostEntity>::toDto)
 
     override suspend fun getUnsavedPosts(): List<Post> = postDao.getUnsavedPosts().map {
         it.toDto()
@@ -28,6 +27,10 @@ class PostRepositoryImpl(
 
     override suspend fun deleteUnsavedPosts() {
         postDao.deleteUnsaved()
+    }
+
+    override suspend fun updateNewPosts() {
+        postDao.updateNewPost()
     }
 
     override suspend fun getAll() {
@@ -40,6 +43,22 @@ class PostRepositoryImpl(
             }
         )
     }
+
+    override fun getNewerCount(): Flow<Int> = flow {
+            while (true) {
+                delay(10_000L)
+                val response = PostsApi.retrofitService.getNewer(postDao.findMaxId())
+                if (!response.isSuccessful) {
+                    throw ApiError(response.code(), response.message())
+                }
+
+                val body = response.body() ?: throw ApiError(response.code(), response.message())
+                postDao.insert(body.toEntity().map {it.copy(isNewPost = true) })
+                emit(postDao.count())
+            }
+        }
+            .catch { e -> throw AppError.from(e) }
+          //  .flowOn(Dispatchers.Default)
 
     override suspend fun save(post: Post) {
         try {
