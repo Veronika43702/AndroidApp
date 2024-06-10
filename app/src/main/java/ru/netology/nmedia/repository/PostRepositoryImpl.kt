@@ -10,7 +10,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Media
-import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toDto
@@ -160,10 +159,10 @@ class PostRepositoryImpl(
         val response: Response<Post>
         postDao.likeById(post.id)
         try {
-            if (!post.likedByMe) {
-                response = PostsApi.retrofitService.likeById(post.id)
+            response = if (!post.likedByMe) {
+                PostsApi.retrofitService.likeById(post.id)
             } else {
-                response = PostsApi.retrofitService.dislikeById(post.id)
+                PostsApi.retrofitService.dislikeById(post.id)
             }
 
             if (!response.isSuccessful) {

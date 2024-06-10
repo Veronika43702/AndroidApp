@@ -8,7 +8,7 @@ import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Post
 
 @Entity
-data class PostEntity constructor(
+data class PostEntity (
     @PrimaryKey
     val id: Long,
     val author: String,
@@ -21,39 +21,27 @@ data class PostEntity constructor(
     val views: Int,
     var isNewPost: Boolean,
     @Embedded
-    val attachment: Attachment? = null
+    val attachment: AttachmentEmb? = null
     //val video: String,
 ){
-    fun toDto(): Post  = Post(
-        id = id,
-        author = author,
-        authorAvatar = authorAvatar,
-        published = published,
-        content = content,
-        likedByMe = likedByMe,
-        likes = likes,
-        share = share,
-        views = views,
-        attachment = attachment,
-        //video = video
-    )
+    fun toDto(): Post  = Post(id,author,authorAvatar,content,published,likedByMe,likes, share, views, attachment?.toDto())
 
     companion object{
         fun fromDto(dto: Post): PostEntity = with(dto){
-            PostEntity(
-                id = id,
-                author = author,
-                authorAvatar = authorAvatar,
-                published = published,
-                content = content,
-                likedByMe = likedByMe,
-                likes = likes,
-                share = share,
-                views = views,
-                isNewPost = false,
-                attachment = attachment,
-                //video = video
-            )
+            PostEntity(id,author, authorAvatar, content, published,likedByMe, likes, share, views, false, AttachmentEmb.fromDto(attachment))
+        }
+    }
+}
+
+data class AttachmentEmb(
+        val url: String,
+        val type: AttachmentType,
+) {
+    fun toDto() = Attachment(url, type)
+
+    companion object{
+        fun fromDto(dto: Attachment?) = dto?.let {
+            AttachmentEmb(it.url, it.type)
         }
     }
 }
