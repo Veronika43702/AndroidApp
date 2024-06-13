@@ -2,12 +2,21 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:icon="@drawable/notification"
-        app:showAsAction="ifRoom"
-        android:title="@string/notifications" />
-    <item
-        android:id="@+id/new_posts_number"
-        app:showAsAction="ifRoom"
-        android:visible="false" />
+
+    <group android:id="@+id/unauthenticated">
+        <item
+            android:id="@+id/signin"
+            android:title="@string/sign_in"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/signup"
+            android:title="@string/sign_up"
+            app:showAsAction="never" />
+    </group>
+    <group android:id="@+id/authenticated">
+        <item
+            android:id="@+id/signout"
+            android:title="@string/sign_out"
+            app:showAsAction="never" />
+    </group>
 </menu>

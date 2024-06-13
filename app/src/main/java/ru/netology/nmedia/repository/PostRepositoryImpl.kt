@@ -51,10 +51,10 @@ class PostRepositoryImpl(
         )
     }
 
-    override fun getNewerCount(): Flow<Int> = flow {
+    override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {
-            delay(10_000L)
-            val response = PostsApi.retrofitService.getNewer(postDao.findMaxId())
+            delay(120_000L)
+            val response = PostsApi.retrofitService.getNewer(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }

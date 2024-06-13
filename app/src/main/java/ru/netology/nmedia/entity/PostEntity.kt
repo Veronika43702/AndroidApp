@@ -11,6 +11,7 @@ import ru.netology.nmedia.dto.Post
 data class PostEntity (
     @PrimaryKey
     val id: Long,
+    val authorId: Long,
     val author: String,
     val authorAvatar: String,
     val content: String,
@@ -24,11 +25,11 @@ data class PostEntity (
     val attachment: AttachmentEmb? = null
     //val video: String,
 ){
-    fun toDto(): Post  = Post(id,author,authorAvatar,content,published,likedByMe,likes, share, views, attachment?.toDto())
+    fun toDto(): Post  = Post(id,authorId,author,authorAvatar,content,published,likedByMe,likes, share, views, attachment?.toDto())
 
     companion object{
         fun fromDto(dto: Post): PostEntity = with(dto){
-            PostEntity(id,author, authorAvatar, content, published,likedByMe, likes, share, views, false, AttachmentEmb.fromDto(attachment))
+            PostEntity(id,authorId, author, authorAvatar, content, published,likedByMe, likes, share, views, false, AttachmentEmb.fromDto(attachment))
         }
     }
 }

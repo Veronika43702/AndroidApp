@@ -45,4 +45,15 @@
     <string name="error_save">Unable to save post. Try again later</string>
     <string name="error_delete">Unable to delete post. Try again later</string>
     <string name="error_likes">Unable to like/dislike post. Try again later</string>
+    <string name="worngLoginPass">Wrong login and/or password</string>
+    <string name="unableSignIn">Unable to sign in. Try again</string>
+
+    <string name="sign_in">Sing In</string>
+    <string name="sign_up">Sing Up</string>
+    <string name="sign_out">Sing Out</string>
+    <string name="login">login</string>
+    <string name="password">password</string>
+
+
+
 </resources>

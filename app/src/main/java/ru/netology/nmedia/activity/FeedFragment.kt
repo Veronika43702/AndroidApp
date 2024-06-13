@@ -141,7 +141,7 @@ class FeedFragment : Fragment() {
         // меню в Top App Bar с количеством новых постов
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.main_menu, menu)
+                menuInflater.inflate(R.menu.options_on_main_menu, menu)
                 val newPostItemCount = menu.findItem(R.id.new_posts_number)
 
                 viewModel.newerCount.observe(viewLifecycleOwner) { count ->

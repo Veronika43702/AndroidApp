@@ -47,4 +47,11 @@
     <string name="error_delete">Невозможно удалить пост. Попробуйте позднее</string>
     <string name="error_likes">Невозможно поставить/снять лайк. Попробуйте позднее</string>
     <string name="remove">Удалить</string>
+    <string name="sign_in">Вход</string>
+    <string name="sign_up">Регистрация</string>
+    <string name="sign_out">Выход</string>
+    <string name="login">логин</string>
+    <string name="password">пароль</string>
+    <string name="worngLoginPass">Неверный логин и/или пароль</string>
+    <string name="unableSignIn">Не удалось выполнить вход. Попробуйте снова</string>
 </resources>
