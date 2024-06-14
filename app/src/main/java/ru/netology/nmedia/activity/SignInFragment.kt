@@ -30,19 +30,16 @@ class SignInFragment : Fragment() {
                 viewModel.signIn(login.toString(), password.toString())
             } else {
                 binding.errorText.isVisible = true
-                binding.errorText.text = "login and password cannot be empty"
+                binding.errorText.text = getString(R.string.FieldsNotEmpty)
             }
         }
 
         viewModel.signInErrorState.observe(viewLifecycleOwner) { state ->
+            binding.progressSignIn.isVisible = state.signingInUp
+
             if (state.wrongData) {
                 binding.errorText.isVisible = true
                 binding.errorText.setText(R.string.worngLoginPass)
-            }
-
-            if (state.networkError) {
-                binding.errorText.isVisible = true
-                binding.errorText.setText(R.string.error_loading)
             }
 
             if (state.unableSingIn) {

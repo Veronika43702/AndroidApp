@@ -11,10 +11,10 @@ class AppAuth private constructor(context: Context) {
 
 
     private val _authState = MutableStateFlow(
-            AuthState(
-                    prefs.getLong(KEY_ID, 0L),
-                    prefs.getString(KEY_TOKEN, null)
-            )
+        AuthState(
+            prefs.getLong(KEY_ID, 0L),
+            prefs.getString(KEY_TOKEN, null)
+        )
     )
     public val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
@@ -47,7 +47,7 @@ class AppAuth private constructor(context: Context) {
 
         fun getInstance() = synchronized(this) {
             instance
-                    ?: throw IllegalStateException("getInstance should be called only aftrer initAuth")
+                ?: throw IllegalStateException("getInstance should be called only aftrer initAuth")
         }
 
         fun initAuth(context: Context) = instance ?: synchronized(this) {
@@ -57,4 +57,7 @@ class AppAuth private constructor(context: Context) {
     }
 }
 
-data class AuthState(val id: Long = 0L, val token: String? = null)
+data class AuthState(
+    val id: Long = 0L,
+    val token: String? = null,
+)

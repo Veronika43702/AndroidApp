@@ -7,6 +7,7 @@ import retrofit2.Response
 import ru.netology.nmedia.api.PostsApi
 import ru.netology.nmedia.dao.PostDao
 import okhttp3.RequestBody.Companion.asRequestBody
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Media
@@ -20,6 +21,7 @@ import ru.netology.nmedia.error.NetworkError
 import java.io.IOException
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.PhotoModel
+import ru.netology.nmedia.viewmodel.AuthViewModel
 import java.io.File
 
 class PostRepositoryImpl(

@@ -54,4 +54,8 @@
     <string name="password">пароль</string>
     <string name="worngLoginPass">Неверный логин и/или пароль</string>
     <string name="unableSignIn">Не удалось выполнить вход. Попробуйте снова</string>
+    <string name="Username">имя пользователя</string>
+    <string name="confirm_password">confirm password</string>
+    <string name="FieldsNotEmpty">поля должны быть заполнены</string>
+    <string name="passwordDiff">пароли не совпадают</string>
 </resources>

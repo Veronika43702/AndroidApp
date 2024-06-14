@@ -87,7 +87,7 @@ class AppActivity : AppCompatActivity() {
                         }
 
                         R.id.signup -> {
-                            AppAuth.getInstance().setAuth(5, "x-token")
+                            findNavController(R.id.nav_host_fragment_container).navigate(R.id.signUpFragmentNav)
                             true
                         }
 

@@ -27,7 +27,8 @@ import java.time.OffsetDateTime
 private val empty = Post(
         authorId = 0,
         content = "",
-        author = "Student"
+        author = "you "
+
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {

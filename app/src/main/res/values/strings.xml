@@ -53,7 +53,10 @@
     <string name="sign_out">Sing Out</string>
     <string name="login">login</string>
     <string name="password">password</string>
-
+    <string name="Username">username</string>
+    <string name="confirm_password">confirm password</string>
+    <string name="FieldsNotEmpty">fields cannot be empty</string>
+    <string name="passwordDiff">password do not match</string>
 
 
 </resources>

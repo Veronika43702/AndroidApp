@@ -15,7 +15,7 @@ import ru.netology.nmedia.model.AuthModel
 import ru.netology.nmedia.util.SingleLiveEvent
 
 class SignInViewModel(application: Application) : AndroidViewModel(application) {
-    private var user = User(0L, "")
+    private var user = User(0L, "" ,"")
 
     private val _signInErrorState = MutableLiveData(AuthModel())
     val signInErrorState: LiveData<AuthModel>
@@ -33,6 +33,7 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
 
     private suspend fun checkUser(login: String, password: String) {
         try {
+            _signInErrorState.value = AuthModel(signingInUp = true)
             code = 0
             val response = PostsApi.retrofitService.auth(login, password)
             if (!response.isSuccessful) {
