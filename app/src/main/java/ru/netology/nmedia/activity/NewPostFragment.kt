@@ -1,6 +1,7 @@
 package ru.netology.nmedia.activity
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -14,30 +15,31 @@ import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
+import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class NewPostFragment : Fragment() {
     companion object {
         var Bundle.textArg: String? by StringArg
     }
-
-    private val viewModel: PostViewModel by activityViewModels()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val viewModel by activityViewModels<PostViewModel>()
+        val authViewModel by viewModels<AuthViewModel>()
         val binding = FragmentNewPostBinding.inflate(
             inflater,
             container,
@@ -102,10 +104,33 @@ class NewPostFragment : Fragment() {
             binding.photo.setImageURI(it.uri)
         }
 
+
+        // диалоговое окно для аутентификации при like или создании поста
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
+        dialogBuilder
+                .setTitle("Are you sure you want to sign out? Post will be unsaved")
+                .setNegativeButton("back") { dialog, _ ->
+                    dialog.cancel()
+
+                }
+                .setPositiveButton("Sign Out") { dialog, _ ->
+                    AppAuth.getInstance().removeAuth()
+                    findNavController().navigateUp()
+
+                }
+
+        val dialog: AlertDialog = dialogBuilder.create()
+
         // меню в Top App Bar с кнопкой save
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.new_post_menu, menu)
+            }
+
+            override fun onPrepareMenu(menu: Menu) {
+                menu.setGroupVisible(R.id.signoutFromNewPost, authViewModel.authenticated)
+                menu.setGroupVisible(R.id.unauthenticated, !authViewModel.authenticated)
+                menu.removeItem(R.id.signout)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
@@ -118,11 +143,15 @@ class NewPostFragment : Fragment() {
                         AndroidUtils.hideKeyboard(requireView())
                         true
                     }
+                    R.id.signoutFromNewPost -> {
+                        dialog.show()
+                        true
+                    }
                 else -> false
             }
         }, viewLifecycleOwner)
 
-        viewModel.postCreated.observe(viewLifecycleOwner) {
+                viewModel.postCreated.observe(viewLifecycleOwner) {
                 findNavController().navigateUp()
         }
 

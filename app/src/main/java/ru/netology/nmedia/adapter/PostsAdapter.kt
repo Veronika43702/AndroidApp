@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.BuildConfig.BASE_URL
 import ru.netology.nmedia.R
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.CardPostsBinding
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Number
@@ -28,7 +29,7 @@ interface OnInteractionListener {
 }
 
 class PostsAdapter(
-    private val onInteractionListener: OnInteractionListener
+        private val onInteractionListener: OnInteractionListener
 ) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -43,8 +44,8 @@ class PostsAdapter(
 }
 
 class PostViewHolder(
-    private val binding: CardPostsBinding,
-    private val onInteractionListener: OnInteractionListener
+        private val binding: CardPostsBinding,
+        private val onInteractionListener: OnInteractionListener
 
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
@@ -58,13 +59,14 @@ class PostViewHolder(
             like.isChecked = post.likedByMe
             avatar.loadAvatars("${BASE_URL}/avatars/${post.authorAvatar}")
 
-            if (post.attachment != null){
-                when (post.attachment!!.type){
+            if (post.attachment != null) {
+                when (post.attachment!!.type) {
                     AttachmentType.IMAGE -> {
                         attachmentImage.visibility = View.VISIBLE
                         line.visibility = View.VISIBLE
                         attachmentImage.loadAttachment("${BASE_URL}/media/${post.attachment!!.url}")
-                    }}
+                    }
+                }
             } else {
                 attachmentImage.visibility = View.GONE
                 line.visibility = View.GONE
@@ -75,9 +77,11 @@ class PostViewHolder(
                 share.isClickable = true
                 waitLoad.visibility = View.GONE
 
+
                 like.setOnClickListener {
                     onInteractionListener.onLike(post)
                 }
+
 
                 share.setOnClickListener {
                     onInteractionListener.onShare(post)

@@ -58,6 +58,8 @@ class SignInFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                AndroidUtils.hideKeyboard(binding.login)
+                AndroidUtils.hideKeyboard(binding.password)
                 viewModel.clearErrorText()
                 findNavController().navigateUp()
             }
