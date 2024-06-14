@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.api.PostsApi
+import ru.netology.nmedia.api.Api
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.User
 import ru.netology.nmedia.error.ApiError
@@ -35,7 +35,7 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
         try {
             _signInErrorState.value = AuthModel(signingInUp = true)
             code = 0
-            val response = PostsApi.retrofitService.auth(login, password)
+            val response = Api.retrofitService.auth(login, password)
             if (!response.isSuccessful) {
                 if (response.code() == 404) {
                     code = response.code()
