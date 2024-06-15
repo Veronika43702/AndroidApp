@@ -108,12 +108,12 @@ class NewPostFragment : Fragment() {
         // диалоговое окно для аутентификации при like или создании поста
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
         dialogBuilder
-                .setTitle("Are you sure you want to sign out? Post will be unsaved")
-                .setNegativeButton("back") { dialog, _ ->
+                .setTitle(getString(R.string.areYouSure))
+                .setNegativeButton(getString(R.string.back)) { dialog, _ ->
                     dialog.cancel()
 
                 }
-                .setPositiveButton("Sign Out") { dialog, _ ->
+                .setPositiveButton(getString(R.string.sign_out)) { dialog, _ ->
                     AppAuth.getInstance().removeAuth()
                     findNavController().navigateUp()
 

@@ -55,8 +55,12 @@
     <string name="password">password</string>
     <string name="Username">username</string>
     <string name="confirm_password">confirm password</string>
-    <string name="FieldsNotEmpty">fields cannot be empty</string>
+    <string name="fieldsNotEmpty">fields cannot be empty</string>
     <string name="passwordDiff">password do not match</string>
+    <string name="needToSignIn">You need to sign in to continue</string>
+    <string name="areYouSure">Are you sure you want to sign out? Post will be unsaved</string>
+    <string name="back">back</string>
+    />
 
 
 </resources>

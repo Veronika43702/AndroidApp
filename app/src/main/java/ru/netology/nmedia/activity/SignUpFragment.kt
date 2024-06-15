@@ -23,18 +23,17 @@ class SignUpFragment : Fragment() {
     ): View {
         val binding = FragmentSignUpBinding.inflate(layoutInflater, container, false)
 
-        binding.errorText.isVisible = false
-        val name = binding.name.getText()
-        val login = binding.login.getText()
-        val password = binding.password.getText()
-        val confirmPassword = binding.confirmPassword.getText()
-
+        val name = binding.nameText.getText()
+        val login = binding.loginText.getText()
+        val password = binding.passwordText.getText()
+        val confirmPassword = binding.confirmPasswordText.getText()
+        binding.errorText.visibility = View.INVISIBLE
 
         binding.signUpButton.setOnClickListener {
-            if (name.isNotEmpty() && login.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
-                binding.errorText.isVisible = false
+            binding.errorText.visibility = View.INVISIBLE
+            if (!name.isNullOrEmpty()  && !login.isNullOrEmpty() && !password.isNullOrEmpty() && !confirmPassword.isNullOrEmpty()) {
                 if (password.toString() != confirmPassword.toString()) {
-                    binding.errorText.isVisible = true
+                    binding.errorText.visibility = View.VISIBLE
                     binding.errorText.text = getString(R.string.passwordDiff)
                 } else {
                     // отправка запроса на сервер (получение id и token) и сохранение user в appAuth
@@ -45,14 +44,15 @@ class SignUpFragment : Fragment() {
                     )
                 }
             } else {
-                binding.errorText.isVisible = true
-                binding.errorText.text = getString(R.string.FieldsNotEmpty)
+                binding.errorText.visibility = View.VISIBLE
+                binding.errorText.text = getString(R.string.fieldsNotEmpty)
+
             }
         }
 
         viewModel.signUpErrorState.observe(viewLifecycleOwner) { state ->
             if (state.unableSingIn) {
-                binding.errorText.isVisible = true
+                binding.errorText.visibility = View.VISIBLE
                 binding.errorText.text = getString(R.string.error_loading)
             }
 

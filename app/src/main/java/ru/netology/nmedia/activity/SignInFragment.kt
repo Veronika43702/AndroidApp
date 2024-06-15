@@ -19,18 +19,18 @@ class SignInFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = FragmentSignInBinding.inflate(layoutInflater, container, false)
 
-        binding.errorText.isVisible = false
-        val login = binding.login.getText()
-        val password = binding.password.getText()
+        val login = binding.loginText.getText()
+        val password = binding.passwordText.getText()
+        binding.errorText.visibility = View.INVISIBLE
 
         binding.signInButton.setOnClickListener {
-            if (login.isNotEmpty() && password.isNotEmpty()) {
-                binding.errorText.isVisible = false
+            if (!login.isNullOrEmpty() && !password.isNullOrEmpty()) {
+                binding.errorText.visibility = View.INVISIBLE
                 // отправка запроса на сервер (получение id и token) и сохранение user в appAuth
                 viewModel.signIn(login.toString(), password.toString())
             } else {
-                binding.errorText.isVisible = true
-                binding.errorText.text = getString(R.string.FieldsNotEmpty)
+                binding.errorText.visibility = View.VISIBLE
+                binding.errorText.text = getString(R.string.fieldsNotEmpty)
             }
         }
 
@@ -38,12 +38,12 @@ class SignInFragment : Fragment() {
             binding.progressSignIn.isVisible = state.signingInUp
 
             if (state.wrongData) {
-                binding.errorText.isVisible = true
+                binding.errorText.visibility = View.VISIBLE
                 binding.errorText.setText(R.string.worngLoginPass)
             }
 
             if (state.unableSingIn) {
-                binding.errorText.isVisible = true
+                binding.errorText.visibility = View.VISIBLE
                 binding.errorText.setText(R.string.error_loading)
             }
         }

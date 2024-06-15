@@ -43,12 +43,12 @@ class FeedFragment : Fragment() {
         // диалоговое окно для аутентификации при like или создании поста
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
         dialogBuilder
-                .setTitle("You need to sign in to continue")
-                .setNegativeButton("back") { dialog, _ ->
+                .setTitle(getString(R.string.needToSignIn))
+                .setNegativeButton(getString(R.string.back)) { dialog, _ ->
                     dialog.cancel()
 
                 }
-                .setPositiveButton("Sign In") { dialog, _ ->
+                .setPositiveButton(getString(R.string.sign_in)) { dialog, _ ->
                     findNavController().navigate(R.id.signInFragmentForNav)
 
                 }

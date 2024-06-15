@@ -56,6 +56,9 @@
     <string name="unableSignIn">Не удалось выполнить вход. Попробуйте снова</string>
     <string name="Username">имя пользователя</string>
     <string name="confirm_password">confirm password</string>
-    <string name="FieldsNotEmpty">поля должны быть заполнены</string>
+    <string name="fieldsNotEmpty">поля должны быть заполнены</string>
     <string name="passwordDiff">пароли не совпадают</string>
+    <string name="needToSignIn">Необходимо авторизоваться, чтобы продолжить</string>
+    <string name="areYouSure" >Вы уверены, что хотите выйти? Пост будет невозможно сохранить</string>
+    <string name="back">назад</string>
 </resources>
