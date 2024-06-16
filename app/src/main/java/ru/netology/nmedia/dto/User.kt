@@ -5,3 +5,5 @@ data class User(
     val token: String,
     val name: String
 )
+
+data class PushToken(val token: String)

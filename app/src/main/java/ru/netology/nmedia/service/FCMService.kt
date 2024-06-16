@@ -13,6 +13,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import ru.netology.nmedia.R
+import ru.netology.nmedia.auth.AppAuth
 import kotlin.random.Random
 
 
@@ -37,9 +38,20 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        println(Gson().toJson(message))
-
+        val messageFromServer = gson.fromJson(
+            message.data[content],
+            FromServer::class.java
+        )
         try {
+            if (messageFromServer.recipientId == AppAuth.getInstance().authState.value.id) {
+                handleFromServer("special for you", messageFromServer)
+            }
+            if (messageFromServer.recipientId == null) {
+                handleFromServer("broadcasting news", messageFromServer)
+            } else if (messageFromServer.recipientId != AppAuth.getInstance().authState.value.id) {
+                AppAuth.getInstance().sendPushToken()
+            }
+
             message.data[action]?.let {
                 when (Action.valueOf(it)) {
                     Action.LIKE -> handleLike(
@@ -58,12 +70,12 @@ class FCMService : FirebaseMessagingService() {
                 }
             }
         } catch (e: IllegalArgumentException) {
-            println("Ошибка")
+            e.printStackTrace()
         }
     }
 
     override fun onNewToken(token: String) {
-        println(token)
+        AppAuth.getInstance().sendPushToken(token)
     }
 
     private fun handleLike(content: Like) {
@@ -91,13 +103,24 @@ class FCMService : FirebaseMessagingService() {
                     content.postAuthor,
                 )
             )
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(content.postContent)
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(content.postContent)
             )
 
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
+        notify(notification)
+    }
+
+    private fun handleFromServer(title: String, content: FromServer) {
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(title)
+            .setContentText(content.content)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
         notify(notification)
     }
 
@@ -129,5 +152,10 @@ data class Like(
 data class NewPost(
     val postAuthor: String,
     val postContent: String,
+)
+
+data class FromServer(
+    val recipientId: Long?,
+    val content: String
 )
 
