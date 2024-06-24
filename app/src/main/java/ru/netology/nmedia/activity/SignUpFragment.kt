@@ -8,14 +8,30 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentSignUpBinding
+import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.util.AndroidUtils
+import ru.netology.nmedia.viewmodel.PostViewModel
 import ru.netology.nmedia.viewmodel.SignUpViewModel
+import ru.netology.nmedia.viewmodel.ViewModelFactory
 
 class SignUpFragment : Fragment() {
-    private val viewModel: SignUpViewModel by activityViewModels()
+    private val dependencyContainer = DependencyContainer.getInstance()
+
+    private val viewModel: SignUpViewModel by viewModels(
+        ownerProducer = ::requireParentFragment,
+        factoryProducer = {
+            ViewModelFactory(
+                dependencyContainer.repository,
+                dependencyContainer.appAuth,
+                dependencyContainer.apiService
+            )
+        }
+    )
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,7 +47,7 @@ class SignUpFragment : Fragment() {
 
         binding.signUpButton.setOnClickListener {
             binding.errorText.visibility = View.INVISIBLE
-            if (!name.isNullOrEmpty()  && !login.isNullOrEmpty() && !password.isNullOrEmpty() && !confirmPassword.isNullOrEmpty()) {
+            if (!name.isNullOrEmpty() && !login.isNullOrEmpty() && !password.isNullOrEmpty() && !confirmPassword.isNullOrEmpty()) {
                 if (password.toString() != confirmPassword.toString()) {
                     binding.errorText.visibility = View.VISIBLE
                     binding.errorText.text = getString(R.string.passwordDiff)

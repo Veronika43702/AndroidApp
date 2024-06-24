@@ -4,9 +4,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import retrofit2.Response
-import ru.netology.nmedia.api.Api
 import ru.netology.nmedia.dao.PostDao
 import okhttp3.RequestBody.Companion.asRequestBody
+import ru.netology.nmedia.api.ApiService
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Media
@@ -23,7 +23,8 @@ import ru.netology.nmedia.model.PhotoModel
 import java.io.File
 
 class PostRepositoryImpl(
-    private val postDao: PostDao
+    private val postDao: PostDao,
+    private val apiService: ApiService
 ) : PostRepository {
     override val data = postDao.getAll()
         .map(List<PostEntity>::toDto)
@@ -41,7 +42,7 @@ class PostRepositoryImpl(
     }
 
     override suspend fun getAll() {
-        val posts: List<Post> = Api.retrofitService.getAll()
+        val posts: List<Post> = apiService.getAll()
 
         postDao.deleteUnsaved()
         postDao.insert(
@@ -54,7 +55,7 @@ class PostRepositoryImpl(
     override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {
             delay(120_000L)
-            val response = Api.retrofitService.getNewer(id)
+            val response = apiService.getNewer(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -79,7 +80,7 @@ class PostRepositoryImpl(
 
             postDao.insert(PostEntity.fromDto(post.copy(id = id)))
 
-            val response = Api.retrofitService.save(post.copy(id = 0L))
+            val response = apiService.save(post.copy(id = 0L))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -115,7 +116,7 @@ class PostRepositoryImpl(
             } else {
                 post
             }
-            val response = Api.retrofitService.save(postWithAttachment)
+            val response = apiService.save(postWithAttachment)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -138,13 +139,13 @@ class PostRepositoryImpl(
             "file", file.name, file.asRequestBody()
         )
 
-        return Api.retrofitService.upload(media)
+        return apiService.upload(media)
     }
 
     override suspend fun removeById(id: Long) {
         try {
             postDao.removeById(id)
-            val response = Api.retrofitService.removeById(id)
+            val response = apiService.removeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -160,9 +161,9 @@ class PostRepositoryImpl(
         postDao.likeById(post.id)
         try {
             response = if (!post.likedByMe) {
-                Api.retrofitService.likeById(post.id)
+                apiService.likeById(post.id)
             } else {
-                Api.retrofitService.dislikeById(post.id)
+                apiService.dislikeById(post.id)
             }
 
             if (!response.isSuccessful) {
@@ -180,7 +181,7 @@ class PostRepositoryImpl(
     override suspend fun saveEditedPost(post: Post) {
         try {
             postDao.insert(PostEntity.fromDto(post))
-            val response = Api.retrofitService.save(post)
+            val response = apiService.save(post)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }

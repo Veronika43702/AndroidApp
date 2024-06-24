@@ -17,7 +17,9 @@ import ru.netology.nmedia.auth.AppAuth
 import kotlin.random.Random
 
 
-class FCMService : FirebaseMessagingService() {
+class FCMService(
+    private val appAuth: AppAuth
+) : FirebaseMessagingService() {
     private val action = "action"
     private val content = "content"
     private val channelId = "remote"
@@ -43,13 +45,13 @@ class FCMService : FirebaseMessagingService() {
             FromServer::class.java
         )
         try {
-            if (messageFromServer.recipientId == AppAuth.getInstance().authState.value.id) {
+            if (messageFromServer.recipientId == appAuth.authState.value.id) {
                 handleFromServer("special for you", messageFromServer)
             }
             if (messageFromServer.recipientId == null) {
                 handleFromServer("broadcasting news", messageFromServer)
-            } else if (messageFromServer.recipientId != AppAuth.getInstance().authState.value.id) {
-                AppAuth.getInstance().sendPushToken()
+            } else if (messageFromServer.recipientId != appAuth.authState.value.id) {
+                appAuth.sendPushToken()
             }
 
             message.data[action]?.let {
@@ -75,7 +77,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        AppAuth.getInstance().sendPushToken(token)
+        appAuth.sendPushToken(token)
     }
 
     private fun handleLike(content: Like) {

@@ -8,15 +8,35 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentSignInBinding
+import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.util.AndroidUtils
+import ru.netology.nmedia.viewmodel.PostViewModel
 import ru.netology.nmedia.viewmodel.SignInViewModel
+import ru.netology.nmedia.viewmodel.ViewModelFactory
 
 class SignInFragment : Fragment() {
-    private val viewModel: SignInViewModel by activityViewModels()
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    private val dependencyContainer = DependencyContainer.getInstance()
+
+    private val viewModel: SignInViewModel by viewModels(
+        ownerProducer = ::requireParentFragment,
+        factoryProducer = {
+            ViewModelFactory(
+                dependencyContainer.repository,
+                dependencyContainer.appAuth,
+                dependencyContainer.apiService
+            )
+        }
+    )
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val binding = FragmentSignInBinding.inflate(layoutInflater, container, false)
 
         val login = binding.loginText.getText()
@@ -53,14 +73,16 @@ class SignInFragment : Fragment() {
         }
 
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                AndroidUtils.hideKeyboard(binding.login)
-                AndroidUtils.hideKeyboard(binding.password)
-                viewModel.clearErrorText()
-                findNavController().navigateUp()
-            }
-        })
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    AndroidUtils.hideKeyboard(binding.login)
+                    AndroidUtils.hideKeyboard(binding.password)
+                    viewModel.clearErrorText()
+                    findNavController().navigateUp()
+                }
+            })
 
         return binding.root
     }

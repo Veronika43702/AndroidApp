@@ -20,13 +20,19 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
-import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.ActivityAppBinding
+import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.viewmodel.AuthViewModel
+import ru.netology.nmedia.viewmodel.ViewModelFactory
 
 class AppActivity : AppCompatActivity() {
+    private val dependencyContainer = DependencyContainer.getInstance()
+    val viewModel: AuthViewModel by viewModels(
+        factoryProducer = {
+            ViewModelFactory(dependencyContainer.repository, dependencyContainer.appAuth, dependencyContainer.apiService)
+        }
+    )
 
-    val viewModel by viewModels<AuthViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,18 +47,18 @@ class AppActivity : AppCompatActivity() {
             val text = it.getStringExtra(Intent.EXTRA_TEXT)
             if (text.isNullOrBlank()) {
                 Snackbar.make(
-                        binding.root,
-                        getString(R.string.empty_text_error),
-                        Snackbar.LENGTH_SHORT
+                    binding.root,
+                    getString(R.string.empty_text_error),
+                    Snackbar.LENGTH_SHORT
                 )
-                        .show()
+                    .show()
                 return@let
             }
 
             it.removeExtra(Intent.EXTRA_TEXT)
 
             val navHostFragment =
-                    supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
             val navController = navHostFragment.navController
             navController.navigate(R.id.action_feedFragment_to_newPostFragment, Bundle().apply {
                 textArg = text
@@ -60,7 +66,7 @@ class AppActivity : AppCompatActivity() {
 
         }
 
-//      // обновление (принудительное) меню (items) в корутине при изменении данных модели AppViewModel
+//      // обновление (принудительное) меню (items) в корутине при изменении данных модели AuthViewModel
         lifecycleScope.launch {
             // корутина работает только при открытом приложении
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -80,24 +86,24 @@ class AppActivity : AppCompatActivity() {
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
-                    when (menuItem.itemId) {
-                        R.id.signin -> {
-                            findNavController(R.id.nav_host_fragment_container).navigate(R.id.signInFragmentForNav)
-                            true
-                        }
-
-                        R.id.signup -> {
-                            findNavController(R.id.nav_host_fragment_container).navigate(R.id.signUpFragmentNav)
-                            true
-                        }
-
-                        R.id.signout -> {
-                            AppAuth.getInstance().removeAuth()
-                            true
-                        }
-
-                        else -> false
+                when (menuItem.itemId) {
+                    R.id.signin -> {
+                        findNavController(R.id.nav_host_fragment_container).navigate(R.id.signInFragmentForNav)
+                        true
                     }
+
+                    R.id.signup -> {
+                        findNavController(R.id.nav_host_fragment_container).navigate(R.id.signUpFragmentNav)
+                        true
+                    }
+
+                    R.id.signout -> {
+                        dependencyContainer.appAuth.removeAuth()
+                        true
+                    }
+
+                    else -> false
+                }
         })
 
         requestNotificationsPermission()
