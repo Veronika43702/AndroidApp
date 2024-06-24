@@ -21,8 +21,9 @@ import java.io.IOException
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.PhotoModel
 import java.io.File
+import javax.inject.Inject
 
-class PostRepositoryImpl(
+class PostRepositoryImpl @Inject constructor (
     private val postDao: PostDao,
     private val apiService: ApiService
 ) : PostRepository {

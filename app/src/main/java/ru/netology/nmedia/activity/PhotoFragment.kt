@@ -24,7 +24,6 @@ class PhotoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentPhotoBinding.inflate(layoutInflater, container, false)
-        val viewModel: PostViewModel by activityViewModels()
         val BASE_URL = "http://10.0.2.2:9999//"
 
         val uri = requireArguments().uriArg

@@ -17,21 +17,21 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.ActivityAppBinding
-import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.viewmodel.AuthViewModel
-import ru.netology.nmedia.viewmodel.ViewModelFactory
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
-    private val dependencyContainer = DependencyContainer.getInstance()
-    val viewModel: AuthViewModel by viewModels(
-        factoryProducer = {
-            ViewModelFactory(dependencyContainer.repository, dependencyContainer.appAuth, dependencyContainer.apiService)
-        }
-    )
+    @Inject
+    lateinit var appAuth: AppAuth
+
+    val viewModel: AuthViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,7 +98,7 @@ class AppActivity : AppCompatActivity() {
                     }
 
                     R.id.signout -> {
-                        dependencyContainer.appAuth.removeAuth()
+                        appAuth.removeAuth()
                         true
                     }
 

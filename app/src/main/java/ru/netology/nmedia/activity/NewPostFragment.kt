@@ -19,44 +19,28 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
-import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
-import ru.netology.nmedia.viewmodel.ViewModelFactory
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NewPostFragment : Fragment() {
     companion object {
         var Bundle.textArg: String? by StringArg
     }
 
-    private val dependencyContainer = DependencyContainer.getInstance()
+    @Inject
+    lateinit var appAuth: AppAuth
 
-    private val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment,
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
-
-    private val authViewModel: AuthViewModel by viewModels(
-        ownerProducer = ::requireParentFragment,
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
+    private val viewModel: PostViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -138,8 +122,8 @@ class NewPostFragment : Fragment() {
                 dialog.cancel()
 
             }
-            .setPositiveButton(getString(R.string.sign_out)) { dialog, _ ->
-                dependencyContainer.appAuth.removeAuth()
+            .setPositiveButton(getString(R.string.sign_out)) { _, _ ->
+                appAuth.removeAuth()
                 findNavController().navigateUp()
 
             }
