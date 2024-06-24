@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace "ru.netology.nmedia"
+    compileSdk 34
 
     defaultConfig {
         applicationId "ru.netology.nmedia"
-        minSdkVersion 22
-        targetSdkVersion 34
-        compileSdk 34
+        minSdk 26
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
