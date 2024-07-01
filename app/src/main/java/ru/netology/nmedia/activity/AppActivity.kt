@@ -145,7 +145,6 @@ class AppActivity : AppCompatActivity() {
             }
             Toast.makeText(this@AppActivity, R.string.google_play_unavailable, Toast.LENGTH_LONG)
                 .show()
-            println("hi")
         }
     }
     // конец кода из лекции DI

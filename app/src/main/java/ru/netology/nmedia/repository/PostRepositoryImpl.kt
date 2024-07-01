@@ -1,5 +1,7 @@
 package ru.netology.nmedia.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
@@ -27,8 +29,16 @@ class PostRepositoryImpl @Inject constructor (
     private val postDao: PostDao,
     private val apiService: ApiService
 ) : PostRepository {
-    override val data = postDao.getAll()
-        .map(List<PostEntity>::toDto)
+    override val data = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders =  false),
+        pagingSourceFactory = {
+            PostPagingSource(
+                apiService
+            )
+        }
+    ).flow
+
+    val postsInDB = postDao.getAll()
 
     override suspend fun getUnsavedPosts(): List<Post> = postDao.getUnsavedPosts().map {
         it.toDto()

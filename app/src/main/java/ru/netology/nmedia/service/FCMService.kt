@@ -15,6 +15,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
+import javax.inject.Inject
 import kotlin.random.Random
 
 
@@ -25,6 +26,7 @@ class FCMService: FirebaseMessagingService() {
     private val channelId = "remote"
     private val gson = Gson()
 
+    @Inject
     lateinit var appAuth: AppAuth
 
     override fun onCreate() {

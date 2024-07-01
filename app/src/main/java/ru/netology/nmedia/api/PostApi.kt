@@ -45,4 +45,13 @@ interface ApiService {
     suspend fun register(@Field("login") login: String, @Field("pass") password: String, @Field("name") name: String): Response<User>
     @POST("users/push-tokens")
     suspend fun saveToken(@Body token: PushToken): Response<Unit>
+
+    @GET("posts/latest")
+    suspend fun getLatest( @Query("count") count: Int): Response<List<Post>>
+
+    @GET("posts/{id}/before")
+    suspend fun getBefore(@Path("id") id: Long, @Query("count") count: Int): Response<List<Post>>
+
+    @GET("posts/{id}/after")
+    suspend fun getAfter(@Path("id") id: Long, @Query("count") count : Int): Response<List<Post>>
 }

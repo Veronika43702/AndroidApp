@@ -13,11 +13,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentSignInBinding
 import ru.netology.nmedia.util.AndroidUtils
+import ru.netology.nmedia.viewmodel.PostViewModel
 import ru.netology.nmedia.viewmodel.SignInViewModel
 
 @AndroidEntryPoint
 class SignInFragment : Fragment() {
-
     private val viewModel: SignInViewModel by viewModels()
 
     override fun onCreateView(

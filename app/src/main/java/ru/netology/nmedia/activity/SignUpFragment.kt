@@ -19,7 +19,6 @@ import ru.netology.nmedia.viewmodel.SignUpViewModel
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
-
     private val viewModel: SignUpViewModel by viewModels()
 
     override fun onCreateView(
