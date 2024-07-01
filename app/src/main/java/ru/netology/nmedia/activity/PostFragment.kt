@@ -7,7 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.filter
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.EditPostFragment.Companion.contentArg
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -82,9 +88,23 @@ class PostFragment : Fragment() {
 
         //binding.listOfOnePost.adapter = adapter
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts.filter { it.id == id })
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.data.collectLatest {
+                    adapter.submitData(it.filter { it.id == id })
+                }
+            }
         }
+
+//        lifecycleScope.launchWhenCreated {
+//            viewModel.data.collectLatest{
+//                adapter.submitData(it.filter { it.id == id })
+//            }
+//        }
+
+//        viewModel.data.observe(viewLifecycleOwner) { state ->
+//            adapter.submitList(state.posts.filter { it.id == id })
+//        }
 
         return binding.root
     }

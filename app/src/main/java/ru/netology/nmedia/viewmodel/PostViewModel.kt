@@ -1,62 +1,69 @@
 package ru.netology.nmedia.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.filter
+import androidx.paging.map
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.switchMap
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
 import java.time.OffsetDateTime
+import javax.inject.Inject
 
 private val empty = Post(
-        authorId = 0,
-        content = "",
-        author = "you "
+    authorId = 0,
+    content = "",
+    author = "you "
 
 )
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository =
-            PostRepositoryImpl(AppDb.getInstance(application).postDao())
-
+@HiltViewModel
+class PostViewModel @Inject constructor(
+    private val repository: PostRepositoryImpl,
+    appAuth: AppAuth
+) : ViewModel() {
     private val _state = MutableLiveData(FeedModelState())
     val state: LiveData<FeedModelState>
         get() = _state
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val data: LiveData<FeedModel> = AppAuth.getInstance()
-            .authState
-            .flatMapLatest { auth ->
-                repository.data.map { posts ->
-                    FeedModel(
-                            posts.map { it.copy(ownedByMe = auth.id == it.authorId)},
-                            posts.isEmpty()
-                    )
-                }
-            }
-            .catch { it.printStackTrace() }
-            .asLiveData(Dispatchers.Default)
 
-    val newerCount: LiveData<Int> = data.switchMap {
-        repository.getNewerCount(it.posts.firstOrNull()?.id ?: 0L)
-                .catch { _state.postValue(FeedModelState(error = true)) }
-                .asLiveData(Dispatchers.Default, 100)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val data: Flow<PagingData<Post>> = appAuth
+        .authState
+        .flatMapLatest { auth ->
+            repository.data.map { posts ->
+                posts.map { it.copy(ownedByMe = auth.id == it.authorId) }
+            }
+        }
+        .catch { it.printStackTrace() }
+        .flowOn(Dispatchers.Default)
+
+
+    val posts = repository.postsInDB.asLiveData(Dispatchers.Default)
+    val newerCount: LiveData<Int> = posts.switchMap { posts ->
+        repository.getNewerCount (posts.firstOrNull()?.id ?: 0L)
+            .catch { _state.postValue(FeedModelState(error = true)) }
+            .asLiveData(Dispatchers.Default, 100)
     }
 
     private val _photo = MutableLiveData<PhotoModel?>(null)

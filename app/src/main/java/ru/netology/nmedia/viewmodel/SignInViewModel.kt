@@ -1,21 +1,26 @@
 package ru.netology.nmedia.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.api.Api
+import ru.netology.nmedia.api.ApiService
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.User
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.AuthModel
 import ru.netology.nmedia.util.SingleLiveEvent
+import javax.inject.Inject
 
-class SignInViewModel(application: Application) : AndroidViewModel(application) {
-    private var user = User(0L, "" ,"")
+@HiltViewModel
+class SignInViewModel  @Inject constructor (
+    private val appAuth: AppAuth,
+    private val apiService: ApiService
+) : ViewModel() {
+    private var user = User(0L, "", "")
 
     private val _signInErrorState = MutableLiveData(AuthModel())
     val signInErrorState: LiveData<AuthModel>
@@ -35,7 +40,7 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
         try {
             _signInErrorState.value = AuthModel(signingInUp = true)
             code = 0
-            val response = Api.retrofitService.auth(login, password)
+            val response = apiService.auth(login, password)
             if (!response.isSuccessful) {
                 if (response.code() == 404) {
                     code = response.code()
@@ -53,7 +58,7 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             try {
                 checkUser(login, password)
-                AppAuth.getInstance().setAuth(user.id, user.token)
+               appAuth.setAuth(user.id, user.token)
                 _signInErrorState.value = AuthModel()
                 _signedIn.value = Unit
             } catch (e: Exception) {

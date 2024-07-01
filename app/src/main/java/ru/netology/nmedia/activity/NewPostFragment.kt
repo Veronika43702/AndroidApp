@@ -14,12 +14,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
@@ -28,22 +28,30 @@ import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NewPostFragment : Fragment() {
     companion object {
         var Bundle.textArg: String? by StringArg
     }
+
+    @Inject
+    lateinit var appAuth: AppAuth
+
+    private val viewModel: PostViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val viewModel by activityViewModels<PostViewModel>()
-        val authViewModel by viewModels<AuthViewModel>()
         val binding = FragmentNewPostBinding.inflate(
             inflater,
             container,
-            false)
+            false
+        )
         // фокус (курсив) на поле текста
         binding.content.requestFocus()
 
@@ -61,6 +69,7 @@ class NewPostFragment : Fragment() {
                         ).show()
                         return@registerForActivityResult
                     }
+
                     Activity.RESULT_OK -> {
                         val uri = it.data?.data ?: return@registerForActivityResult
                         viewModel.savePhoto(PhotoModel(uri, uri.toFile()))
@@ -108,16 +117,16 @@ class NewPostFragment : Fragment() {
         // диалоговое окно для аутентификации при like или создании поста
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
         dialogBuilder
-                .setTitle(getString(R.string.areYouSure))
-                .setNegativeButton(getString(R.string.back)) { dialog, _ ->
-                    dialog.cancel()
+            .setTitle(getString(R.string.areYouSure))
+            .setNegativeButton(getString(R.string.back)) { dialog, _ ->
+                dialog.cancel()
 
-                }
-                .setPositiveButton(getString(R.string.sign_out)) { dialog, _ ->
-                    AppAuth.getInstance().removeAuth()
-                    findNavController().navigateUp()
+            }
+            .setPositiveButton(getString(R.string.sign_out)) { _, _ ->
+                appAuth.removeAuth()
+                findNavController().navigateUp()
 
-                }
+            }
 
         val dialog: AlertDialog = dialogBuilder.create()
 
@@ -134,7 +143,7 @@ class NewPostFragment : Fragment() {
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
-                when(menuItem.itemId) {
+                when (menuItem.itemId) {
                     R.id.save -> {
                         viewModel.configureNewPost(binding.content.text.toString())
                         viewModel.save()
@@ -143,16 +152,18 @@ class NewPostFragment : Fragment() {
                         AndroidUtils.hideKeyboard(requireView())
                         true
                     }
+
                     R.id.signoutFromNewPost -> {
                         dialog.show()
                         true
                     }
-                else -> false
-            }
+
+                    else -> false
+                }
         }, viewLifecycleOwner)
 
-                viewModel.postCreated.observe(viewLifecycleOwner) {
-                findNavController().navigateUp()
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            findNavController().navigateUp()
         }
 
         // отмена сохранения поста с сохранением черновика через системную кнопку "назад"
